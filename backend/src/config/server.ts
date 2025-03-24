@@ -1,10 +1,8 @@
 import express, { Application } from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import userRoutes from '../routes/userRoutes';
 
-dotenv.config();
 
 const app: Application = express();
 app.use(express.json());

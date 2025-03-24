@@ -18,6 +18,5 @@ export const loginUserService = async (userData: LoginDTO, Adapter: userReposito
   if (!user) {
     throw new Error('Invalid email or password.');
   }
-
   return user;
 }
