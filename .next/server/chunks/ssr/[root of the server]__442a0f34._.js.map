@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 15, "column": 0}, "map": {"version":3,"sources":["file://C%3A/Users/Alejandro/Desktop/BalloonTec/strive/src/app/page.tsx"],"sourcesContent":["\"use client\";\n\nimport React from \"react\";\nimport { useEditor, EditorContent } from \"@tiptap/react\";\nimport StarterKit from \"@tiptap/starter-kit\";\nimport \"../styles/tiptap.css\";\n\nexport default function Home() {\n  const editor = useEditor({\n    extensions: [\n      StarterKit, \n    ],\n    content:'Write something here',\n    editorProps: {\n      attributes: {\n        spellCheck: \"false\",\n      },\n    },\n  });\n\n  return (\n    <div className=\"main-container\">\n      <EditorContent editor={editor}/>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;AAGA;AACA;AAJA;;;;;AAOe,SAAS;IACtB,MAAM,SAAS,CAAA,GAAA,kKAAA,CAAA,YAAS,AAAD,EAAE;QACvB,YAAY;YACV,2JAAA,CAAA,UAAU;SACX;QACD,SAAQ;QACR,aAAa;YACX,YAAY;gBACV,YAAY;YACd;QACF;IACF;IAEA,qBACE,8OAAC;QAAI,WAAU;kBACb,cAAA,8OAAC,kKAAA,CAAA,gBAAa;YAAC,QAAQ;;;;;;;;;;;AAG7B","debugId":null}},
+    {"offset": {"line": 53, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}
