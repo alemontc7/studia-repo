@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import "../styles/tiptap.css";
 
 export default function Home() {
   const router = useRouter();
