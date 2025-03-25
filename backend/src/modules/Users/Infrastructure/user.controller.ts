@@ -38,6 +38,7 @@ export default class UserController{
                         maxAge: 3600000,
                     }
                 );
+                ///test push
             } else{
                 res.cookie(
                     'token', token, {
