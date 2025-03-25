@@ -33,7 +33,15 @@ const LoginForm: React.FC = () => {
         router.push("/home");
         console.log("I PUSHED YOU TO HOME");
       } else{
-        toast.error("You should login to access this page");
+        toast.custom((t) => (
+          <div
+            className={`flex items-center gap-2 p-4 bg-blue-100 rounded shadow-lg ${t.visible ? 'animate-enter' : 'animate-leave'}`}
+            style={{ borderLeft: '4px solid #0ea5e9' }}
+          >
+            <span className="text-blue-800 text-xl">ℹ️</span>
+            <p className="text-blue-800">Login to access the home page :D</p>
+          </div>
+        ));        
       }
     })();
   }, [router]);
