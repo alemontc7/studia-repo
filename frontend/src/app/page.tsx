@@ -22,7 +22,7 @@ export default function Home() {
         </div>
         <div className="presentation">
           <p>
-            THE best tool for la cato's systems engineering students, take notes, plan your learning schedule and more
+            THE best tool for la cato&apos;s systems engineering students, take notes, plan your learning schedule and more
           </p>
         </div>
         <div className="buttons-container">
