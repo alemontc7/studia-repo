@@ -26,13 +26,14 @@ app.use(cors({
   credentials: true
 }));
 
-
 app.use('/api/users', userRoutes);
+app.use('/', (req, res) => {res.send('Hello from studia api');});
 
-// Puerto
-const PORT = process.env.PORT || 7000;
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 7000;
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en ${PORT}`);
+  });
+}
 
-// Levantar servidor
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en ${PORT}`);
-});
+export default app;
