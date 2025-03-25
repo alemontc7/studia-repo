@@ -34,7 +34,6 @@ const RegisterForm: React.FC = () => {
   const [name, setname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const [registerState, setRegisterState] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState({score: 0, feedback: ""});
 
@@ -61,9 +60,14 @@ const RegisterForm: React.FC = () => {
         1000
       );
 
-    } catch (error: any) {
-      toast.error(error.message || "Error en el registro");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || "Error en el registro");
+      } else {
+        toast.error("Error en el registro");
+      }
     }
+    
   };
 
   return (
@@ -121,9 +125,6 @@ const RegisterForm: React.FC = () => {
       <div className="flex justify-center">
       <Button type="submit" className="w-full" variant="studia-primary">Registrarse</Button>
       </div>
-      
-      {!registerState && message && <p className="text-red-500 flex text-center">{message}</p>}
-      {registerState && message && <p className="text-green-600 text-center">{message}</p>}
     </form>
     </div>
   );
