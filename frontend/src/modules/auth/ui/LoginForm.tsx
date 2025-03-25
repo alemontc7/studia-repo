@@ -26,24 +26,17 @@ const LoginForm: React.FC = () => {
   useEffect(() => {
     (async () => {
       console.log("I am verifying the session");
-      // Comprueba si existe la cookie "token"
-      const tokenExists = document.cookie.split(';').some(c => c.trim().startsWith('token='));
-      if (!tokenExists) {
-        console.log("No token found, so no need to show error toast.");
-        return;
-      }
-      
       const sessionValid = await verifySession();
       console.log("is this session valid?", sessionValid);
       if (sessionValid) {
         console.log("PUSHING TO HOME");
+        router.push("/home");
         console.log("I PUSHED YOU TO HOME");
-      } else {
-        toast.error("Your session has expired. Please log in again.");
+      } else{
+        toast.error("You should login to access this page");
       }
     })();
   }, [router]);
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
