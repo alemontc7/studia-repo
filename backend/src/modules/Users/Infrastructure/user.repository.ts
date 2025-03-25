@@ -45,6 +45,7 @@ export class userRepository {
       }
       const user = data[0];
       const isValidPassword = await bcrypt.compare(userData.password, user.password);
+      console.log("Passowrd is valid?", isValidPassword);
       if (!isValidPassword) {
         throw new Error(`We can not find you :( please check your credentials`);
       }

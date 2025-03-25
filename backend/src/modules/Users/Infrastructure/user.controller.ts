@@ -27,12 +27,12 @@ export default class UserController{
             const {email, password} = req.body;
             const data = await loginUserService({email, password});
             const token = await jwtService.generateToken({email: data.email});
-            
+            const sameSiteConditional = process.env.NODE_ENV === 'production' ? 'none' : 'strict';
             res.cookie(
                 'token', token, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'none',
+                    sameSite: sameSiteConditional,
                     maxAge: 3600000,
                 }
             );
