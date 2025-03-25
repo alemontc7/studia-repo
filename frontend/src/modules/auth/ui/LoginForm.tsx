@@ -23,20 +23,20 @@ const LoginForm: React.FC = () => {
   const [errorInLogin, setErrorInLogin] = useState(false);
 
 
-  useEffect(() => {
+  /*useEffect(() => {
     (async () => {
       console.log("I am verifying the session");
       const sessionValid = await verifySession();
       console.log("is this session valid?", sessionValid);
       if (sessionValid) {
         console.log("PUSHING TO HOME");
-        router.push("/home");
+        //router.push("/home");
         console.log("I PUSHED YOU TO HOME");
       } else{
         toast.error("You should login to access this page");
       }
     })();
-  }, [router]);
+  }, [router]);*/
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
