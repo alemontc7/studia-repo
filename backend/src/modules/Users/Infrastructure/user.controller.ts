@@ -28,27 +28,32 @@ export default class UserController{
             const data = await loginUserService({email, password});
             const token = await jwtService.generateToken({email: data.email});
             const sameSiteConditional = process.env.NODE_ENV === 'production' ? 'none' : 'strict';
-            if(process.env.NODE_ENV === 'production'){
-                res.cookie(
-                    'token', token, {
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
-                        sameSite: sameSiteConditional,
-                        domain: '.railway.app',
-                        maxAge: 3600000,
-                    }
-                );
-                ///test push a
-            } else{
-                res.cookie(
-                    'token', token, {
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
-                        sameSite: sameSiteConditional,
-                        maxAge: 3600000,
-                    }
-                );
+            
+            let cookieDomain = '';
+            if (process.env.FRONTEND_URL) {
+              const { hostname } = new URL(process.env.FRONTEND_URL);
+              const parts = hostname.split('.');
+              if (parts.length >= 2) {
+                cookieDomain = '.' + parts.slice(-2).join('.');
+              }
             }
+            
+            if(process.env.NODE_ENV === 'production'){
+                res.cookie('token', token, {
+                  httpOnly: true,
+                  secure: true,
+                  sameSite: sameSiteConditional,
+                  domain: cookieDomain,
+                  maxAge: 3600000,
+                });
+              } else {
+                res.cookie('token', token, {
+                  httpOnly: true,
+                  secure: false,
+                  sameSite: sameSiteConditional,
+                  maxAge: 3600000,
+                });
+              }
             res.status(201).json({
                 name: data.name,
                 email: data.email,
