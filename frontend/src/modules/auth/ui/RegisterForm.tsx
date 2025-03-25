@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
@@ -34,7 +35,6 @@ const RegisterForm: React.FC = () => {
   const [name, setname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [registerState, setRegisterState] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState({score: 0, feedback: ""});
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +51,6 @@ const RegisterForm: React.FC = () => {
     e.preventDefault();
     try {
       const user = await authService.register({ name, email, password });
-      setRegisterState(true);
       toast.success(`Hola ${user.name} :D`);
       setTimeout(() => 
         {

@@ -6,8 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { tree } from "next/dist/build/templates/app-page";
-import { error } from "console";
 import Link from 'next/link';
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import toast from "react-hot-toast";
@@ -20,7 +18,6 @@ const LoginForm: React.FC = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const [loginState, setLoginState] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorInLogin, setErrorInLogin] = useState(false);
@@ -49,9 +46,14 @@ const LoginForm: React.FC = () => {
       setTimeout(() => {
         router.push("/home");
       }, 1000);
-    } catch (error: any) {
-      toast.error(error.message || "Error en el login");
-      setErrorInLogin(true);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || "Error en el registro");
+        setErrorInLogin(true);
+      } else {
+        toast.error("Error en el registro");
+        setErrorInLogin(true);
+      }
     } finally {
       setLoading(false);
     }
