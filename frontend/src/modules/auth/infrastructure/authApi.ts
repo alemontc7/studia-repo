@@ -1,6 +1,6 @@
 import { LoginCredentials, RegisterData, User } from "../domain/user";
 
-const API_BASE = 'http://localhost:7000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:7000/api';
 
 export async function loginApi(credentials: LoginCredentials): Promise<User>{
   const response = await fetch(`${API_BASE}/users/login`,{
