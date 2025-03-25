@@ -10,6 +10,7 @@ if (process.env.NODE_ENV !== 'production') {
 const app: Application = express();
 app.use(express.json());
 app.use(cookieParser());
+app.set('trust proxy', 1);
 
 const allowedOrigins = ['http://localhost:3000', process.env.FRONTEND_URL || ''];
 console.log("FRONTEND_URL from env:", process.env.FRONTEND_URL);

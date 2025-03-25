@@ -25,9 +25,13 @@ const LoginForm: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      console.log("I am verifying the session");
       const sessionValid = await verifySession();
+      console.log("is this session valid?", sessionValid);
       if (sessionValid) {
+        console.log("PUSHING TO HOME");
         router.push("/home");
+        console.log("I PUSHED YOU TO HOME");
       } else{
         toast.error("You should login to access this page");
       }
