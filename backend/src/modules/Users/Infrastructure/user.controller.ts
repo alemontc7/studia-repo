@@ -53,7 +53,7 @@ export default class UserController{
                   sameSite: sameSiteConditional,
                   maxAge: 3600000,
                 });
-              }
+              } //a
             res.status(201).json({
                 name: data.name,
                 email: data.email,
