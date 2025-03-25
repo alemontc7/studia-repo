@@ -31,7 +31,9 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/history": "^4.7.11",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/ms": "^2.1.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
