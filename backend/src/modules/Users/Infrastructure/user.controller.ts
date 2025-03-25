@@ -32,7 +32,7 @@ export default class UserController{
                 'token', token, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'strict',
+                    sameSite: 'none',
                     maxAge: 3600000,
                 }
             );
