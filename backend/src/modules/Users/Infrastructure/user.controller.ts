@@ -39,6 +39,7 @@ export default class UserController{
                 }
                 console.log("THE COOKIE WILL BE SAVED WITH THE FOLLOWING DOMAIN", cookieDomain);
             }
+            //commment to be pushed
             
             if(process.env.NODE_ENV === 'production'){
                 res.cookie('token', token, {
