@@ -31,11 +31,13 @@ export default class UserController{
             
             let cookieDomain = '';
             if (process.env.FRONTEND_URL) {
-              const { hostname } = new URL(process.env.FRONTEND_URL);
-              const parts = hostname.split('.');
-              if (parts.length >= 2) {
-                cookieDomain = '.' + parts.slice(-2).join('.');
-              }
+                const { hostname } = new URL(process.env.FRONTEND_URL);
+                console.log("DEBUGGING HOSTNAME FOR COOKIES", hostname);
+                const parts = hostname.split('.');
+                if (parts.length >= 2) {
+                    cookieDomain = '.' + parts.slice(-2).join('.');
+                }
+                console.log("THE COOKIE WILL BE SAVED WITH THE FOLLOWING DOMAIN", cookieDomain);
             }
             
             if(process.env.NODE_ENV === 'production'){
