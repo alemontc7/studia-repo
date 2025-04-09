@@ -14,7 +14,7 @@ export async function loginApi(credentials: LoginCredentials): Promise<User>{
     const errorData = await response.json();
     throw new Error(errorData.message || 'Error en el login');
   }
-
+  console.log('Cookies:', document.cookie); 
   return response.json();
 }
 
