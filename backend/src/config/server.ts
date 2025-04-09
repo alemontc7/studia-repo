@@ -20,11 +20,12 @@ console.log("FRONTEND_URL from env:", process.env.FRONTEND_URL);
 
 app.use(cors({
   origin: (origin, callback) => {
+    console.log('Request origin:', origin);
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    return callback(new Error('Not allowed by CORS'));
+    return callback(new Error('Not allowed by CORS: ' + origin));
   },
   credentials: true
 }));
