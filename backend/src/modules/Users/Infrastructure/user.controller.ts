@@ -46,7 +46,7 @@ export default class UserController{
                   httpOnly: true,
                   secure: true,
                   sameSite: sameSiteConditional,
-                  domain: cookieDomain,
+                  //domain: cookieDomain,
                   maxAge: 3600000,
                 });
               } else {
@@ -54,7 +54,7 @@ export default class UserController{
                   httpOnly: true,
                   secure: false,
                   sameSite: sameSiteConditional,
-                  domain: cookieDomain,
+                  //domain: cookieDomain,
                   maxAge: 3600000,
                 });
               } //a
