@@ -13,11 +13,7 @@ app.use(cookieParser());
 app.set('trust proxy', 1);
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? [
-      process.env.FRONTEND_URL,
-      'https://studia-production.vercel.app',
-      'https://studia-api-production.vercel.app'
-    ]
+  ? [process.env.FRONTEND_URL]
   : ['http://localhost:3000'];
 
 console.log("FRONTEND_URL from env:", process.env.FRONTEND_URL);
@@ -31,9 +27,9 @@ app.use(cors({
     }
     return callback(new Error('Not allowed by CORS: ' + origin));
   },
-  credentials: true,
-  exposedHeaders: ['Set-Cookie'],
+  credentials: true
 }));
+
 
 app.use('/api/users', userRoutes);
 app.use('/', (req, res) => {res.send('Hello from studia api');});
