@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/:path*`
+        destination: `${process.env.API}/api/:path*`
       },
     ];
   },
@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Access-Control-Allow-Origin',
-            value: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
+            value: `${process.env.FRONTEND_URL}`,
           },
           {
             key: 'Access-Control-Allow-Methods',
