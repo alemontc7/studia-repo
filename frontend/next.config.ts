@@ -4,15 +4,14 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*', // Todas las peticiones a /api/*
-        destination: 'https://studia-api-production.vercel.app/api/:path*' // Se redirigen a tu backend
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/:path*`
       },
     ];
   },
   async headers() {
     return [
       {
-        // Esto es opcional y depende de tus necesidades
         source: '/api/:path*',
         headers: [
           {
@@ -21,7 +20,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'https://studia-production.vercel.app',
+            value: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
           },
           {
             key: 'Access-Control-Allow-Methods',
