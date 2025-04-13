@@ -1,26 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function ResetPasswordPage() {
+function ResetPasswordPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Siempre llamar a los hooks al inicio del componente
+  // Siempre declarar los hooks al inicio del componente
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Extraer parámetros de forma incondicional
+  // Extraer parámetros (sin condicionar la declaración de hooks)
   const token = searchParams.get("token");
   const email = searchParams.get("email");
 
-  // useEffect para redirigir en caso de parámetros inválidos
+  // useEffect para validar los parámetros sin condicionar hooks
   useEffect(() => {
     if (!token || !email) {
       toast.error("Token o email inválido.");
@@ -49,13 +49,10 @@ export default function ResetPasswordPage() {
       }
       toast.success(data.message || "Contraseña actualizada con éxito.");
       setTimeout(() => router.push("/login"), 1500);
-    } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message || 'Error desconocido');
-        } else {
-          toast.error('Error');
-        }
-      } finally {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Error desconocido";
+      toast.error(message);
+    } finally {
       setLoading(false);
     }
   };
@@ -96,5 +93,13 @@ export default function ResetPasswordPage() {
         </Button>
       </form>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordPageContent />
+    </Suspense>
   );
 }
