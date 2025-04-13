@@ -125,7 +125,7 @@ const LoginForm: React.FC = () => {
         </Button>
 
         <div className="text-center mt-4">
-          <Link href="/" className="text-blue-500 hover:underline">
+          <Link href="/forgot-password" className="text-blue-500 hover:underline">
             I lost my password
           </Link>
         </div>
