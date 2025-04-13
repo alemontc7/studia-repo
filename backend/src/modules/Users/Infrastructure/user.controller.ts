@@ -4,6 +4,7 @@ import { Router } from "express";
 import { createUserService } from "../Application/createUser.service";
 import { loginUserService } from "../Application/loginUser.service";
 import { jwtService } from "../../Auth/jwtService";
+import { findUserService } from "../Application/findUser.service";
 
 export const userRouter = Router();
 
@@ -89,6 +90,21 @@ export default class UserController{
             console.log("This is the state that matters to the front", res.statusCode);
         } catch(error:any){
             res.status(403).json({message: error.message || 'Expired or Invalid token'});
+        }
+    }
+
+    async findByEmail(req: Request, res: Response): Promise<void>{
+        try{
+            const {email} = req.params;
+            const user = await findUserService(email);
+            if(!user){
+                res.status(404).json({message: 'User not found'});
+                return;
+            }
+            console.log("User found", user);
+            res.status(200).json(user);
+        } catch(error:any){
+            res.status(400).json({message: error.message || 'Error al buscar usuario'});
         }
     }
 }

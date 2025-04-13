@@ -1,6 +1,5 @@
 import { LoginDTO } from '../Domain/login.dto';
 import { userRepository } from '../Infrastructure/user.repository';
-import { jwtService } from '../../Auth/jwtService';
 import { UserEntity } from '../Domain/user.entity';
 
 export const loginUserService = async (userData: LoginDTO, Adapter: userRepository = new userRepository()):Promise<UserEntity> => {

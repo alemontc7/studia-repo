@@ -51,4 +51,12 @@ export class userRepository {
       }
       return data && data.length > 0 ? data[0] : null;
     }
+
+    async findByEmail(email: string): Promise<UserEntity | null> {
+      const { data } = await supabase.from('users').select().eq('email', email);
+      if (!data || data.length === 0) {
+        throw new Error(`User can not be found`);
+      }
+      return data && data.length > 0 ? data[0] : null;
+    }
 }
