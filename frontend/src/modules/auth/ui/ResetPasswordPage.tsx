@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { resetPassword } from "../application/resetPasswordService";
 
 function ResetPasswordPageContent() {
   const router = useRouter();
@@ -36,18 +37,10 @@ function ResetPasswordPageContent() {
     }
     setLoading(true);
     try {
-      const payload = { email, token, newPassword };
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        credentials: "include",
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Error al restablecer la contraseña.");
-      }
-      toast.success(data.message || "Contraseña actualizada con éxito.");
+      const token = searchParams.get("token") || "";
+      const email = searchParams.get("email") || "";
+      const response = await resetPassword(token, email, newPassword);
+      toast.success(response.message || "Contraseña actualizada con éxito.");
       setTimeout(() => router.push("/login"), 1500);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Error desconocido";

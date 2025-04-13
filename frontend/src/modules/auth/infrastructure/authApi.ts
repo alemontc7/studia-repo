@@ -62,3 +62,23 @@ export async function forgotPasswordApi(email: string): Promise<{message: string
   }
   return data;
 }
+
+export async function resetPasswordApi(token: string, email: string, newPassword: string): Promise<{message: string}>{
+  if(!token || !email || !newPassword){
+    throw new Error('Token, email and new password are required');
+  }
+  const payload = { token, email, newPassword };
+  console.log("Payload for reset password:", payload);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    credentials: "include",
+  });
+  const data = await response.json();
+  console.log("Response from reset password API:", data);
+  if (!response.ok) {
+    throw new Error(data.message || "Error resetting password");
+  }
+  return data;  
+}
