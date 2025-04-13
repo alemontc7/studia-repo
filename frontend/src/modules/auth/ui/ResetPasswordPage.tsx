@@ -56,9 +56,14 @@ const ResetPasswordPage: React.FC = () => {
       toast.success(data.message || "Contraseña actualizada con éxito.");
       // Opcional: Redirigir al usuario al login tras un breve retraso
       setTimeout(() => router.push("/login"), 1500);
-    } catch (error: any) {
-      toast.error(error.message || "Error al restablecer la contraseña.");
-    } finally {
+    } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message || 'Error sending recovery email');
+        } else {
+          toast.error('Error sending recovery email');
+        }
+      } 
+    finally {
       setLoading(false);
     }
   };
