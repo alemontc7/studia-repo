@@ -16,9 +16,14 @@ const ForgotPasswordPage: React.FC = () => {
     try{
       const response = await forgotPassword(email);
       toast.success(response.message || 'Check your email for the recovery link!');
-    } catch(error: any) {
-      toast.error(error.message || 'Error sending recovery email');
-    } finally {
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message || 'Error sending recovery email');
+      } else {
+        toast.error('Error sending recovery email');
+      }
+    }
+    finally {
       setLoading(false);
     }
   };
