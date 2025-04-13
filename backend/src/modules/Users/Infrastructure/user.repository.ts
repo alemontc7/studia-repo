@@ -59,4 +59,14 @@ export class userRepository {
       }
       return data && data.length > 0 ? data[0] : null;
     }
+
+    async setResetToken(email: string, token: string, expiresAt: number): Promise<void> {
+      const { error } = await supabase
+        .from('users')
+        .update({ reset_token: token, reset_token_expiration: expiresAt })
+        .eq('email', email);
+      if (error) {
+        throw new Error(`Error setting reset token: ${error.message}`);
+      }
+    }
 }

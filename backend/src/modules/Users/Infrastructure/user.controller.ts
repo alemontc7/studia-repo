@@ -5,6 +5,7 @@ import { createUserService } from "../Application/createUser.service";
 import { loginUserService } from "../Application/loginUser.service";
 import { jwtService } from "../../Auth/jwtService";
 import { findUserService } from "../Application/findUser.service";
+import { forgotPasswordService } from "../Application/forgotPassword.service";
 
 export const userRouter = Router();
 
@@ -107,4 +108,20 @@ export default class UserController{
             res.status(400).json({message: error.message || 'Error al buscar usuario'});
         }
     }
+
+    async forgotPassword(req: Request, res: Response): Promise<void> {
+        console.log("I am inside the forgot password controller");
+        try {
+          const { email } = req.body;
+          if (!email) {
+            res.status(400).json({ message: 'El correo es requerido.' });
+            return;
+          }
+          const result = await forgotPasswordService(email);
+          res.status(200).json(result);
+        } catch (error: any) {
+          res.status(500).json({ message: error.message || 'Error al enviar el enlace de recuperación.' });
+        }
+      }
+      
 }
