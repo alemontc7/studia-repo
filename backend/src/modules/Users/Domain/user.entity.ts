@@ -3,4 +3,6 @@ export interface UserEntity {
   email: string;                        
   name: string; 
   password: string;
+  reset_token?: string;
+  reset_token_expiration?: Number;
 }

@@ -6,6 +6,7 @@ import { loginUserService } from "../Application/loginUser.service";
 import { jwtService } from "../../Auth/jwtService";
 import { findUserService } from "../Application/findUser.service";
 import { forgotPasswordService } from "../Application/forgotPassword.service";
+import { resetPasswordService } from "../Application/resetPassword.service";
 
 export const userRouter = Router();
 
@@ -122,6 +123,20 @@ export default class UserController{
         } catch (error: any) {
           res.status(500).json({ message: error.message || 'Error al enviar el enlace de recuperación.' });
         }
-      }
+    }
+
+    async resetPassword(req: Request, res: Response): Promise<void> {
+        try {
+          const { email, token, newPassword } = req.body;
+          if (!email || !token || !newPassword) {
+            res.status(400).json({ message: 'El correo, el token y la nueva contraseña son requeridos.' });
+            return;
+          }
+          const result = await resetPasswordService(email, token, newPassword);
+          res.status(200).json(result);
+        } catch (error: any) {
+          res.status(500).json({ message: error.message || 'Error al restablecer la contraseña.' });
+        }
+    }
       
 }

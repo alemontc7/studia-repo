@@ -20,4 +20,5 @@ router.get('/verify', (req, res) => userControllerInstance.verify(req,res));
 router.get('/alive', (req, res) => {res.status(200).send('Backend is running');});
 router.get('/findByEmail/:email', (req, res) => userControllerInstance.findByEmail(req,res));
 router.post('/forgot-password', (req, res) => userControllerInstance.forgotPassword(req, res));
+router.post('/reset-password', (req, res) => userControllerInstance.resetPassword(req, res));
 export default router;

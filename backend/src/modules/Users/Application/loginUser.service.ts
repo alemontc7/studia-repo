@@ -11,7 +11,6 @@ export const loginUserService = async (userData: LoginDTO, Adapter: userReposito
     throw new Error('Password es requerido.');
   }
 
-  // Llamamos al repositorio para verificar si el user está en la BBDD
   const user = await Adapter.findByEmailAndPassword(userData);
 
   if (!user) {

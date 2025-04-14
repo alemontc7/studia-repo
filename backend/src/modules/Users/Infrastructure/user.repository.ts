@@ -69,4 +69,19 @@ export class userRepository {
         throw new Error(`Error setting reset token: ${error.message}`);
       }
     }
+
+    async updatePasswordByEmail(email: string, newPassword: string): Promise<void> {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const { error } = await supabase
+        .from('users')
+        .update({
+          password: hashedPassword,
+          reset_token: null,
+          reset_token_expiration: null
+        })
+        .eq('email', email);
+      if (error) {
+        throw new Error(error.message);
+      }
+    }
 }

@@ -12,12 +12,12 @@ function ResetPasswordPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Siempre declarar los hooks al inicio del componente
+  // siempre declarar los hooks al inicio del componente
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Extraer parámetros (sin condicionar la declaración de hooks)
+  // xxtraer parámetros (sin condicionar la declaración de hooks...)
   const token = searchParams.get("token");
   const email = searchParams.get("email");
 
