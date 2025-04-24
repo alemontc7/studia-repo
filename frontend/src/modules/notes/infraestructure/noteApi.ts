@@ -1,19 +1,20 @@
-import { NoteEntity } from "../domain/NoteEntity";
+// frontend/src/modules/notes/infraestructure/noteApi.ts
 
-TODO: "Implement the connection with the API to fetchNotes, createNotes, updatesNotes and so on";
+import { NoteEntity } from '../domain/NoteEntity';
 
-/*
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL + '/notes';
-
+/**
+ * TODO: implement with real fetch() calls in the next sprint.
+ */
 export async function fetchNotesApi(): Promise<NoteEntity[]> {
-  return fetch(`${API_BASE}`, { credentials: 'include' }).then(res => res.json());
+  // stub: returns empty until backend is wired
+  return [];
 }
 
-export async function createNoteApi(data: CreateNoteDTO): Promise<NoteEntity> {
-  return fetch(`${API_BASE}`, { method:'POST', body:JSON.stringify(data), ... }).then(res => res.json());
+export async function createNoteApi(): Promise<NoteEntity> {
+  // stub: throw so you notice if someone actually calls it
+  throw new Error('createNoteApi not implemented');
 }
 
-export async function updateNoteApi(id:string, data: UpdateNoteDTO): Promise<NoteEntity> {
-  return fetch(`${API_BASE}/${id}`, { method:'PUT', body:JSON.stringify(data), ... }).then(res => res.json());
+export async function updateNoteApi(): Promise<NoteEntity> {
+  throw new Error('updateNoteApi not implemented');
 }
-*/

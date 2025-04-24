@@ -1,7 +1,7 @@
 export interface NoteEntity {
     id: string;
     title: string;
-    content: unknown;
-    createdAt: String;
-    updatedAt: String;
+    content: unknown | null;
+    createdAt: string;
+    updatedAt: string;
   }
