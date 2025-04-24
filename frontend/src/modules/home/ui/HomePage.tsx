@@ -1,12 +1,18 @@
-import React from 'react';
+// frontend/src/app/home/page.tsx
+'use client';
+import { NotesProvider } from '@/modules/notes/ui/NotesContent';
+import Sidebar from '../components/Sidebar';
+import EditorArea from '../components/EditorArea';
 
-const HomePage: React.FC = () => {
+export default function HomePage() {
   return (
-    <div>
-      <h1>Home</h1>
-      <p>Has iniciado sesión correctamente.</p>
-    </div>
+    <NotesProvider>
+      <div className="flex h-screen">
+        <Sidebar />
+        <main className="flex-1 overflow-auto">
+          <EditorArea />
+        </main>
+      </div>
+    </NotesProvider>
   );
-};
-
-export default HomePage;
+}

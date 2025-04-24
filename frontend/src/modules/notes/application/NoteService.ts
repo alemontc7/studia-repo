@@ -1,59 +1,68 @@
-import { NoteEntity } from "../domain/NoteEntity";
-import {nanoid} from "nanoid";
-//import {fetchNotesApi, createNoteApi, updateNoteApi} from "../infrastructure/noteApi";
+// frontend/src/modules/notes/application/NotesService.ts
+import { NoteEntity } from '../domain/NoteEntity';
+import { nanoid } from 'nanoid';
+// (future) import { fetchNotesApi, createNoteApi, updateNoteApi } from '../infrastructure/notesApi';
 
-export class NoteService {
-    private static LS_KEY = 'notes';
-    private notes: NoteEntity[];
+export class NotesService {
+  private static LS_KEY = 'notes';
 
-    constructor(){
-        const raw = localStorage.getItem(NoteService.LS_KEY);
-        this.notes = raw ? JSON.parse(raw) : [];
-        // this.notes = await fetchNotesApi(); // Uncomment this line when the API is ready
-    }
+  /** Load from localStorage (client only) */
+  private loadStore(): NoteEntity[] {
+    if (typeof window === 'undefined') return [];
+    const raw = localStorage.getItem(NotesService.LS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }
 
-    private persist(){
-        localStorage.setItem(NoteService.LS_KEY, JSON.stringify(this.notes));
-    }
+  /** Persist to localStorage (client only) */
+  private saveStore(notes: NoteEntity[]) {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(NotesService.LS_KEY, JSON.stringify(notes));
+  }
 
-    async fetchNotes(): Promise<NoteEntity[]> {
-        // const response = await fetchNotesApi(); // Uncomment this and the next line when the API is ready
-        // this.notes = response;
-        return this.notes;
-    }
+  /** Fetch all notes */
+  async fetchNotes(): Promise<NoteEntity[]> {
+    // FUTURE: return fetchNotesApi();
+    this.notes = this.loadStore();
+    return this.notes;
+  }
 
-    async createNote(): Promise<NoteEntity>{
-        const now = new Date().toISOString();
-        const note: NoteEntity = {
-            id: nanoid(),
-            title: 'New Note',
-            content: 'Write something...',
-            createdAt: now,
-            updatedAt: now,
-        };
-        this.notes = [note, ...this.notes];
-        this.persist();
-        return note;
-        // const response = await createNoteApi(note); // Uncomment this line when the API is ready
-    }
+  /** Create a new note */
+  async createNote(): Promise<NoteEntity> {
+    // FUTURE: return createNoteApi({ title: 'Untitled note' });
+    const now = new Date().toISOString();
+    const note: NoteEntity = {
+      id: nanoid(),
+      title: 'Untitled note',
+      content: null,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.notes = [note, ...this.loadStore()];
+    this.saveStore(this.notes);
+    return note;
+  }
 
-    async updateNote(
-        id:string,
-        patch: Partial<Pick<NoteEntity, 'id' | 'createdAt'>>
-    ): Promise<NoteEntity> {
-        let updated: NoteEntity | undefined;
-        this.notes = this.notes.map(n => {
-            if(n.id === id){
-                updated = { ...n, ...patch, updatedAt: new Date().toISOString() };
-                return updated;
-            }
-            return n;
-        });
-        this.persist();
-        // const response = await updateNoteApi(id, updated); // Uncomment this line when the API is ready
-        if(!updated){
-            throw new Error(`Note with id ${id} not found`);
-        }
+  /** Update an existing note */
+  async updateNote(
+    id: string,
+    patch: Partial<Pick<NoteEntity, 'title' | 'content'>>
+  ): Promise<NoteEntity> {
+    // FUTURE: return updateNoteApi(id, patch);
+    const stored = this.loadStore();
+    let updated: NoteEntity | undefined;
+    const newNotes = stored.map((n) => {
+      if (n.id === id) {
+        updated = { ...n, ...patch, updatedAt: new Date().toISOString() };
         return updated;
-    }
+      }
+      return n;
+    });
+    if (!updated) throw new Error(`Note ${id} not found`);
+    this.notes = newNotes;
+    this.saveStore(this.notes);
+    return updated;
+  }
+
+  /** In-memory cache to avoid repeated JSON.parse on create/update */
+  private notes: NoteEntity[] = [];
 }
