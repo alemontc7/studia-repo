@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client';
 
 import React, { useEffect, useRef } from 'react';
@@ -17,26 +18,31 @@ export default function EditorArea() {
       Placeholder.configure({ placeholder: 'Start typing…' }),
     ],
     content: current?.content ?? '',
+    editorProps: {
+      attributes: {
+        spellcheck: 'false',
+        autocorrect: 'off',
+        autocapitalize: 'off',
+        autocomplete: 'off',
+      },
+    },
+
     onUpdate: ({ editor }) => {
       if (!selectedId) return;
       updateNote(selectedId, { content: editor.getJSON() });
     },
-    autofocus: false, // We'll control focus manually
+    autofocus: false,
   });
 
-  // Focus the editor when a new note is added (selectedId changes)
   useEffect(() => {
     if (editor && selectedId && selectedId !== prevSelectedIdRef.current) {
-      // Small delay to ensure DOM is ready
       setTimeout(() => {
         editor.commands.focus('end');
       }, 10);
-      
       prevSelectedIdRef.current = selectedId;
     }
   }, [editor, selectedId]);
 
-  // When a note is loaded, set its content
   useEffect(() => {
     if (editor && current) {
       editor.commands.setContent(current.content ?? '');
@@ -50,21 +56,18 @@ export default function EditorArea() {
       </div>
     );
   }
-
   return (
     <>
-      <main className="flex-1 p-6">
-        <h2 className="text-3xl font-semibold mb-4">{current?.title || 'Untitled Note'}</h2>
+      <main className="flex-1 p-32">
+        <h2 className="text-[50px] font-extrabold mb-4 text-[#858585]">{current?.title || 'Untitled Note'}</h2>
         <div className="min-h-[60vh]">
-          <EditorContent
-            editor={editor}
-            className="ProseMirror w-full outline-none focus:outline-none"
-          />
-        </div>
-        <div className="mt-2 text-sm text-blue-500">Saving…</div>
-      </main>
+        <EditorContent
+        editor={editor}
+        className="ProseMirror w-full outline-none focus:outline-none text-[20px] text-[#858585] font-normal"
+        />
 
-      {/* Style for cursor visibility */}
+        </div>
+      </main>
       <style jsx global>{`
         .ProseMirror {
           border: none !important;

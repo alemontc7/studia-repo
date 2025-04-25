@@ -1,4 +1,3 @@
-// frontend/src/app/home/components/Sidebar.tsx
 'use client';
 
 import React from 'react';
@@ -10,34 +9,37 @@ export default function Sidebar() {
   const { notes, selectedId, addNote, selectNote } = useNotes();
 
   return (
-    <aside className="w-60 bg-gray-100 h-screen sticky top-0 pt-6 flex flex-col px-4">
-      {/* New Note button, a bit down from the very top */}
+    <aside className="w-72 bg-[#1A1A1A] h-screen sticky top-0 pt-6 pr-6 pl-6 flex flex-col px-4">
       <Button
         onClick={addNote}
-        className="w-full mb-6 bg-black text-white hover:bg-gray-800"
-      >
+        className="w-full mb-6 rounded-[8px]"
+        variant="studia-primary">
         New note
       </Button>
-
-      {/* Notes list */}
+      <div>
+        <h2 className="text-[15px] text-[#7B7B7B] font-bold mb-4">Notes</h2>
+      </div>
       <ul className="overflow-y-auto flex-1 space-y-1">
-        {notes.map((note) => (
-          <li key={note.id}>
-            <button
-              className={`
-                flex items-center w-full px-3 py-2 rounded 
-                ${note.id === selectedId
-                  ? 'bg-blue-200 font-semibold'
-                  : 'hover:bg-gray-200'
-                }
-              `}
-              onClick={() => selectNote(note.id)}
-            >
-              <NoteIcon className="w-4 h-4 mr-2 text-gray-600" />
-              <span className="truncate">{note.title}</span>
-            </button>
-          </li>
-        ))}
+      {notes.map((note) => {
+          const isSelected = note.id === selectedId;
+          return (
+            <li key={note.id}>
+              <button
+                onClick={() => selectNote(note.id)}
+                className={`
+                  flex items-center w-full h-8 rounded px-2
+                  ${isSelected
+                    ? 'bg-[#2A2A2A] text-white'
+                    : 'hover:bg-[#2E2E2E] text-gray-300'
+                  }
+                `}
+              >
+                <NoteIcon className="w-4 h-4 mr-2" />
+                <span className="truncate">{note.title}</span>
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </aside>
   );
