@@ -42,6 +42,11 @@ export class NotesService {
     return note;
   }
 
+  async deleteNote(id: string): Promise<void> {
+    const stored = this.loadStore();
+    this.notes = stored.filter((n) => n.id !== id);
+    this.saveStore(this.notes);
+  }
   /** Update an existing note */
   async updateNote(
     id: string,

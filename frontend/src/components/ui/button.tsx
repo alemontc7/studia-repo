@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        "studia-primary": "bg-[#0B87DC] text-white rounded-[10px] px-3 py-3 font-medium text-[15px] font-poppins hover:bg-[#ffffff] hover:text-[#0B87DC] hover:duration-600 active:bg-[#0B87DC] active:text-white active:duration-300 active:shadow-inner active:shadow-[#ffffff]",
+        "studia-primary": "bg-[#0B87DC] text-white rounded-[10px] px-3 py-3 font-medium text-[15px] font-poppins transition-all duration-300 hover:bg-[#0A78C4] hover:shadow-md active:bg-[#086DB4] active:shadow-inner",
         destructive:
           "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
