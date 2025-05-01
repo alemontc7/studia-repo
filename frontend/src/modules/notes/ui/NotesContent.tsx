@@ -1,4 +1,3 @@
-// frontend/src/modules/notes/ui/NotesContext.tsx
 'use client';
 
 import React, {

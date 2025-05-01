@@ -7,7 +7,11 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Button } from '@/components/ui/button';
+import { FloatImage } from '@/extensions/FloatImage';
+import { CustomImageResize } from '@/extensions/CustomImageResize';
+import Gapcursor from '@tiptap/extension-gapcursor';
 import Image from '@tiptap/extension-image';
+import Dropcursor from '@tiptap/extension-dropcursor';
 
 export default function EditorArea() {
   const { notes, selectedId, addNote, updateNote, deleteNote } = useNotes();
@@ -25,10 +29,21 @@ export default function EditorArea() {
         emptyEditorClass: 'is-editor-empty',
         emptyNodeClass: 'is-empty',
       }),
-      Image.configure({
+      FloatImage.configure({
         inline: true,
         allowBase64: true,
       }),
+      Image.configure({
+        inline: true,
+        allowBase64: true,
+        HTMLAttributes: {
+          class: 'float-image',
+          style: 'max-width: 100%; height: auto; margin: 0 auto; display: block;',
+        },
+      }),
+      CustomImageResize,
+      Dropcursor.configure({ color: '#3B82F6' }), // nice blue dropline
+      Gapcursor
     ],
     content: current?.content ?? '',
     editorProps: {
@@ -58,10 +73,13 @@ export default function EditorArea() {
         return false;
       },
       handleDrop(view, event, slice, moved) {
-        event.preventDefault();
-        const files = event.dataTransfer?.files;
-        if (files?.length) {
-          Array.from(files).forEach(file => {
+        if (moved) {
+          return false;
+        }
+        const files = Array.from(event.dataTransfer?.files || []);
+        if (files.length) {
+          event.preventDefault();
+          files.forEach(file => {
             if (!file.type.startsWith('image/')) return;
             const reader = new FileReader();
             reader.onload = () => {
@@ -148,13 +166,20 @@ export default function EditorArea() {
           autoCapitalize="off"
           onClick={() => setIsEditing(true)}
           onBlur={handleTitleBlur}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleTitleBlur();
+              titleRef.current?.blur();
+            }
+          }}
           className={
             `text-[48px] 
             font-extrabold 
             mb-4 
             outline-none 
             text-[#858585]
-            ${isEditing ? 'ring-2 ring-blue-300 p-1 rounded-[10px] transition-colors duration-300 ease-in-out' : ''} 
+            ${isEditing ? 'ring-2 ring-blue-300 pt-1 pb-1 pr-1 pl-4 rounded-[10px] transition-colors duration-300 ease-in-out' : ''} 
           `}
         >
           {current?.title ?? 'Untitled Note'}
