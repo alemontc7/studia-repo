@@ -12,6 +12,12 @@ import { CustomImageResize } from '@/extensions/CustomImageResize';
 import Gapcursor from '@tiptap/extension-gapcursor';
 import Image from '@tiptap/extension-image';
 import Dropcursor from '@tiptap/extension-dropcursor';
+import EditorToolbar from './EditorToolbar';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import { all, createLowlight } from 'lowlight';
+import { Color } from '@tiptap/extension-color'
+import TextStyle from '@tiptap/extension-text-style'
+import '../styles/EditorArea.css';
 
 export default function EditorArea() {
   const { notes, selectedId, addNote, updateNote, deleteNote } = useNotes();
@@ -19,10 +25,40 @@ export default function EditorArea() {
   const [isEditing, setIsEditing] = useState(false);
   const titleRef = useRef<HTMLDivElement>(null);
   const prevSelectedIdRef = useRef<string | null>(null);
+  const lowlight = createLowlight(all);
+  const [currentColor, setCurrentColor] = useState<string>('#858585');
   
-
+  // Create a custom extension to maintain color between formatting changes
+  const colorPersistence = {
+    name: 'colorPersistence',
+    onCreate({ editor }: { editor: any }) {
+      // Store the last used color
+      let lastColor = currentColor;
+      
+      // Watch for color changes
+      editor.on('transaction', ({ transaction }: { transaction: any }) => {
+        // Check if the transaction includes color changes
+        transaction.steps.forEach((step: { mark: { attrs: { color: string; }; }; }) => {
+          if (step.mark && step.mark.attrs && step.mark.attrs.color) {
+            lastColor = step.mark.attrs.color;
+            setCurrentColor(lastColor);
+          }
+        });
+      });
+      
+      // Apply color when entering a new node type
+      editor.on('selectionUpdate', () => {
+        if (lastColor && lastColor !== '#858585') {
+          editor.commands.setColor(lastColor);
+        }
+      });
+    }
+  };
+  
   const editor = useEditor({
     extensions: [
+      TextStyle,
+      Color,
       StarterKit,
       Placeholder.configure({
         placeholder: 'Start typing…',
@@ -42,8 +78,11 @@ export default function EditorArea() {
         },
       }),
       CustomImageResize,
-      Dropcursor.configure({ color: '#3B82F6' }), // nice blue dropline
-      Gapcursor
+      Dropcursor.configure({ color: '#3B82F6' }),
+      Gapcursor,
+      CodeBlockLowlight.configure({
+        lowlight,
+      }),
     ],
     content: current?.content ?? '',
     editorProps: {
@@ -64,6 +103,7 @@ export default function EditorArea() {
                 ?.chain()
                 .focus()
                 .setImage({ src: reader.result as string })
+                .setColor(currentColor)
                 .run();
             };
             reader.readAsDataURL(file);
@@ -87,6 +127,7 @@ export default function EditorArea() {
                 ?.chain()
                 .focus()
                 .setImage({ src: reader.result as string })
+                .setColor(currentColor)
                 .run();
             };
             reader.readAsDataURL(file);
@@ -103,6 +144,26 @@ export default function EditorArea() {
     },
     autofocus: false,
   });
+
+  // Listen for editor updates to ensure color persistence
+  useEffect(() => {
+    if (editor) {
+      const updateListener = () => {
+        // Apply current color to selection if needed
+        if (currentColor && currentColor !== '#858585' && !editor.isActive('textStyle', { color: currentColor })) {
+          editor.commands.setColor(currentColor);
+        }
+      };
+      
+      editor.on('focus', updateListener);
+      editor.on('selectionUpdate', updateListener);
+      
+      return () => {
+        editor.off('focus', updateListener);
+        editor.off('selectionUpdate', updateListener);
+      };
+    }
+  }, [editor, currentColor]);
 
   useEffect(() => {
     if (editor && selectedId && selectedId !== prevSelectedIdRef.current) {
@@ -156,7 +217,13 @@ export default function EditorArea() {
 
   return (
     <>
-      <main className="flex-1 p-32">
+      <main className="flex-1 h-screen pl-32 pr-32 pb-32 flex flex-col overflow-y-auto">
+
+        <EditorToolbar 
+          editor={editor}
+          currentColor={currentColor}
+          setCurrentColor={setCurrentColor}
+        />
         <div
           ref={titleRef}
           contentEditable
@@ -184,41 +251,14 @@ export default function EditorArea() {
         >
           {current?.title ?? 'Untitled Note'}
         </div>
-        <div className="min-h-[60vh]">
-        <EditorContent
-        editor={editor}
-        className="ProseMirror w-full outline-none focus:outline-none text-[20px] text-[#858585] font-normal"
-        />
-
+        <div className="min-h-[60vh] tiptap prose w-full outline-none focus:outline-none">
+          <EditorContent
+            editor={editor}
+            className="ProseMirror w-full outline-none focus:outline-none text-[20px] text-[#858585] font-normal"
+          />
         </div>
       </main>
       <style jsx global>{`
-        .ProseMirror {
-          border: none !important;
-          margin: 0 !important;
-          padding: 0 !important;
-          outline: none !important;
-          position: relative;
-        }
-
-        .ProseMirror p.is-editor-empty:first-child::before {
-          content: attr(data-placeholder);
-          color: #DBDBDB;
-          pointer-events: none;
-          float: left;
-          height: 0;
-        }
-        .ProseMirror .ProseMirror-cursor {
-          border-left: 2px solid black !important;
-          border-right: none !important;
-          height: 1.15em;
-          animation: blinkCursor 2s step-end infinite;
-        }
-        
-        @keyframes blinkCursor {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
       `}</style>
     </>
   );

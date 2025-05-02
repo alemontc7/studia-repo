@@ -1,0 +1,27 @@
+/* in your globals.css or a <style jsx global> */
+input[type="color"] {
+    -webkit-appearance: none; /* remove default Chrome styling */
+    appearance: none;         /* remove default Firefox styling */
+    border: none !important;  /* nuke any outer border */
+    padding: 0 !important;    /* kill inner padding */
+    background: none;         /* transparent background */
+  }
+  
+  /* Chrome/Safari: remove the swatch wrapper’s border & padding */
+  input[type="color"]::-webkit-color-swatch-wrapper {
+    border: none !important;
+    padding: 0 !important;
+  }
+  
+  /* Chrome/Safari: remove the little border around the swatch itself */
+  input[type="color"]::-webkit-color-swatch {
+    border: none !important;
+    border-radius: 9999px;    /* keep it round */
+  }
+  
+  /* Firefox: remove its own swatch border */
+  input[type="color"]::-moz-color-swatch {
+    border: none !important;
+    border-radius: 9999px;
+  }
+  
