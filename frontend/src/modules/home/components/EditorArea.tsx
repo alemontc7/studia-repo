@@ -8,7 +8,6 @@ import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Button } from '@/components/ui/button';
 import { FloatImage } from '@/extensions/FloatImage';
-import { CustomImageResize } from '@/extensions/CustomImageResize';
 import Gapcursor from '@tiptap/extension-gapcursor';
 import Image from '@tiptap/extension-image';
 import Dropcursor from '@tiptap/extension-dropcursor';
@@ -17,6 +16,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import { all, createLowlight } from 'lowlight';
 import { Color } from '@tiptap/extension-color'
 import TextStyle from '@tiptap/extension-text-style'
+import ImageResize from 'tiptap-extension-resize-image'
 import '../styles/EditorArea.css';
 
 export default function EditorArea() {
@@ -27,33 +27,7 @@ export default function EditorArea() {
   const prevSelectedIdRef = useRef<string | null>(null);
   const lowlight = createLowlight(all);
   const [currentColor, setCurrentColor] = useState<string>('#858585');
-  
-  // Create a custom extension to maintain color between formatting changes
-  const colorPersistence = {
-    name: 'colorPersistence',
-    onCreate({ editor }: { editor: any }) {
-      // Store the last used color
-      let lastColor = currentColor;
-      
-      // Watch for color changes
-      editor.on('transaction', ({ transaction }: { transaction: any }) => {
-        // Check if the transaction includes color changes
-        transaction.steps.forEach((step: { mark: { attrs: { color: string; }; }; }) => {
-          if (step.mark && step.mark.attrs && step.mark.attrs.color) {
-            lastColor = step.mark.attrs.color;
-            setCurrentColor(lastColor);
-          }
-        });
-      });
-      
-      // Apply color when entering a new node type
-      editor.on('selectionUpdate', () => {
-        if (lastColor && lastColor !== '#858585') {
-          editor.commands.setColor(lastColor);
-        }
-      });
-    }
-  };
+
   
   const editor = useEditor({
     extensions: [
@@ -77,7 +51,7 @@ export default function EditorArea() {
           style: 'max-width: 100%; height: auto; margin: 0 auto; display: block;',
         },
       }),
-      CustomImageResize,
+      ImageResize,
       Dropcursor.configure({ color: '#3B82F6' }),
       Gapcursor,
       CodeBlockLowlight.configure({

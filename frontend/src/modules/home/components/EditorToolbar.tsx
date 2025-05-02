@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { type Editor } from '@tiptap/react';
-import { Bold, Italic, List, Code, X } from 'lucide-react';
+import { Bold, Italic, List, Code} from 'lucide-react';
 import '../styles/EditorToolbar.css';
 
 interface ToolbarProps {
