@@ -1,4 +1,4 @@
-export interface Noteentity {
+export interface NoteEntity {
     id: string;
     userId: string;
     title: string;

@@ -8,4 +8,7 @@ export const jwtService = {
     console.log("Verifying token with jwt verify...", token);
     return jwt.verify(token, process.env.JWT_SECRET as string);
   },
+  decodeToken: (token: string): any => {
+    return jwt.decode(token);
+  },
 };

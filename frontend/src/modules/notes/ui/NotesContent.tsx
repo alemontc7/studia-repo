@@ -111,13 +111,16 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
       patch: Partial<Pick<NoteEntity, 'title' | 'content'>>,
       type: string
     ) => {
-      console.log('id is', id);
       const updated = await service.fastUIUpdate(id, patch);
-      setNotes(prev => prev.map(n => (n.id === id ? updated : n)));
+      setNotes(prev => {
+        const others = prev.filter(n => n.id !== id);
+        return [updated, ...others];
+      });
       await service.updateNote(updated, type);
     },
     [service]
   );
+  
 
   return (
     <NotesContext.Provider

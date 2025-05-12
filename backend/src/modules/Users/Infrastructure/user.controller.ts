@@ -29,7 +29,7 @@ export default class UserController{
         try{
             const {email, password} = req.body;
             const data = await loginUserService({email, password});
-            const token = await jwtService.generateToken({email: data.email});
+            const token = await jwtService.generateToken({userId: data.id, email: data.email});
             const sameSiteConditional = process.env.NODE_ENV === 'production' ? 'none' : 'strict';
             
             let cookieDomain = '';
