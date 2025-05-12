@@ -7,7 +7,7 @@ export async function fetchNotesByUser(userId: string): Promise<NoteEntity[]>{
         .from('notes')
         .select('id, user_id, title, content, created_at, updated_at')
         .eq('user_id', userId)
-        .order('updated_at', { ascending: true });
+        .order('updated_at', { ascending: false });
     console.log("THE DATA IS", data);
     if (error) {
         console.error("Error fetching notes:", error);
