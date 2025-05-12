@@ -13,11 +13,10 @@ export async function fetchNotesApi(): Promise<NoteEntity[]> {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Error fetching notes');
   }
-  const data: Array<{id: string, userId: string, title: string, content: any, createdAt: string, updatedAt: string}> = await response.json();
+  const data = (await response.json()) as NoteEntity[];
   const notesArray: NoteEntity[] = data.map(note => ({
       id: note.id,
       title: note.title,
-      userId: note.userId,
       content: note.content,
       createdAt: note.createdAt,
       updatedAt: note.updatedAt,
