@@ -19,8 +19,16 @@ import TextStyle from '@tiptap/extension-text-style'
 import ImageResize from 'tiptap-extension-resize-image'
 import '../styles/EditorArea.css';
 
+function debounce<T extends (...args: any[]) => void>(fn: T, delay = 300): T {
+  let timer: ReturnType<typeof setTimeout>;
+  return ((...args: any[]) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  }) as T;
+}
+
 export default function EditorArea() {
-  const { notes, selectedId, addNote, updateNote, deleteNote } = useNotes();
+  const { notes, selectedId, addNote, updateNote } = useNotes();
   const current = notes.find((n) => n.id === selectedId);
   const [isEditing, setIsEditing] = useState(false);
   const titleRef = useRef<HTMLDivElement>(null);
@@ -28,7 +36,6 @@ export default function EditorArea() {
   const lowlight = createLowlight(all);
   const [currentColor, setCurrentColor] = useState<string>('#858585');
 
-  
   const editor = useEditor({
     extensions: [
       TextStyle,
@@ -114,12 +121,12 @@ export default function EditorArea() {
 
     onUpdate: ({ editor }) => {
       if (!selectedId) return;
-      updateNote(selectedId, { content: editor.getJSON() });
+      console.log('I am updating the note with ID ', selectedId);
+      updateNote(selectedId, { content: editor.getJSON() }, 'content');
     },
     autofocus: false,
   });
 
-  // Listen for editor updates to ensure color persistence
   useEffect(() => {
     if (editor) {
       const updateListener = () => {
@@ -162,7 +169,7 @@ export default function EditorArea() {
     setIsEditing(false);
     const newTitle = titleRef.current?.innerText.trim() ?? '';
     if (selectedId && newTitle !== current?.title){
-      updateNote(selectedId, {title: newTitle});
+      updateNote(selectedId, { title: newTitle }, 'title');
     }
   };
 
@@ -223,7 +230,7 @@ export default function EditorArea() {
             ${isEditing ? 'ring-2 ring-blue-300 pt-1 pb-1 pr-1 pl-4 rounded-[10px] transition-colors duration-300 ease-in-out' : ''} 
           `}
         >
-          {current?.title ?? 'Untitled Note'}
+          {current?.title ?? 'Untitled note'}
         </div>
         <div className="min-h-[60vh] tiptap prose w-full outline-none focus:outline-none">
           <EditorContent

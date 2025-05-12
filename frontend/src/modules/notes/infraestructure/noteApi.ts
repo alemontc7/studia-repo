@@ -1,20 +1,89 @@
-// frontend/src/modules/notes/infraestructure/noteApi.ts
-
 import { NoteEntity } from '../domain/NoteEntity';
 
-/**
- * TODO: implement with real fetch() calls in the next sprint.
- */
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:7000/api';
+
 export async function fetchNotesApi(): Promise<NoteEntity[]> {
-  // stub: returns empty until backend is wired
-  return [];
+  const response = await fetch(`${API_BASE}/notes/`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+  });
+  console.log("I am fetching the notes"); 
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Error fetching notes');
+  }
+  const data: Array<{id: string, userId: string, title: string, content: any, createdAt: string, updatedAt: string}> = await response.json();
+  const notesArray: NoteEntity[] = data.map(note => ({
+      id: note.id,
+      title: note.title,
+      userId: note.userId,
+      content: note.content,
+      createdAt: note.createdAt,
+      updatedAt: note.updatedAt,
+    })
+  );
+  return notesArray;
 }
 
-export async function createNoteApi(): Promise<NoteEntity> {
-  // stub: throw so you notice if someone actually calls it
-  throw new Error('createNoteApi not implemented');
+export async function createNoteApi(note: Omit<NoteEntity, 'userId'>): Promise<NoteEntity> {
+  const res = await fetch(`${API_BASE}/notes/`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ note }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || 'Error creating note');
+  }
+
+  const { saved_status: saved }: { saved_status: NoteEntity } = await res.json();
+  return {
+    id:        saved.id,
+    title:     saved.title,
+    content:   saved.content,
+    createdAt: saved.createdAt,
+    updatedAt: saved.updatedAt,
+  };
 }
 
-export async function updateNoteApi(): Promise<NoteEntity> {
-  throw new Error('updateNoteApi not implemented');
+
+export async function updateNoteApi(
+  note: Omit<NoteEntity, 'userId'>
+): Promise<NoteEntity> {
+  const res = await fetch(`${API_BASE}/notes/`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ note }),
+  });
+  if (!res.ok) {
+    const { message } = await res.json();
+    throw new Error(message || 'Error updating note');
+  }
+  const { saved_status: saved }: { saved_status: NoteEntity } = await res.json();
+  return {
+    id:        saved.id,
+    title:     saved.title,
+    content:   saved.content,
+    createdAt: saved.createdAt,
+    updatedAt: saved.updatedAt,
+  };
+}
+
+
+export async function deleteNoteApi(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/notes/`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || 'Error deleting note');
+  }
 }

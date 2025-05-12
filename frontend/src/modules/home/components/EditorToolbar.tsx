@@ -21,14 +21,11 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
     rounded-md
     transition-colors duration-150
   `;
-  //up this
-  //border border-gray-300
 
   return (
     <div className='sticky top-0 z-20 pb-8 pt-8'>
     <div className="flex space-x-2 items-center bg-white p-2 rounded-lg shadow-sm w-max mx-auto text-[#898989]">
 
-      {/* Bold */}
       <button
         onClick={() => editor.chain().focus().toggleBold().setColor(currentColor).run()}
         className={`
@@ -40,7 +37,6 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         <Bold className="w-5 h-5" />
       </button>
 
-      {/* Italic */}
       <button
         onClick={() => editor.chain().focus().toggleItalic().setColor(currentColor).run()}
         className={`
@@ -52,7 +48,6 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         <Italic className="w-5 h-5" />
       </button>
 
-      {/* Bullet List */}
       <button
         onClick={() => editor.chain().focus().toggleBulletList().setColor(currentColor).run()}
         className={`
@@ -64,8 +59,6 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         <List className="w-5 h-5" />
       </button>
 
-      {/* Code Block */}
-      {/* Code Block */}
       <button
         onClick={() => editor.chain().focus().toggleCodeBlock().setColor(currentColor).run()}
         className={`
@@ -77,7 +70,6 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         <Code className="w-5 h-5" />
       </button>
 
-      {/* Color Picker */}
       <input
         type="color"
         value={currentColor}
@@ -88,12 +80,12 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         }}
         aria-label="Text color"
         className="
-          w-5 h-5            /* 32px square */
-    p-0                /* no padding */
-    rounded-full       /* full circle */
-    appearance-none    /* strip default OS styling */
-    cursor-pointer
-    transition-opacity duration-150 hover:opacity-80
+          w-5 h-5           
+          p-0                
+          rounded-full       
+          appearance-none   
+          cursor-pointer
+          transition-opacity duration-150 hover:opacity-80
         "
       />
     </div>
