@@ -5,6 +5,17 @@ import {
 } from '@/modules/notes/infraestructure/noteApi';
 
 
+interface SyncResult {
+  successes: number;
+  failures: number;
+  lastStatus: number;
+}
+
+export async function isQueueEmpty(): Promise<Boolean>{
+  const ops: SyncOp[] = await db.syncQueue.toArray();
+  return ops.length === 0;
+}
+
 export async function processSyncQueue(): Promise<void> {
   const ops: SyncOp[] = await db.syncQueue.toArray();
 

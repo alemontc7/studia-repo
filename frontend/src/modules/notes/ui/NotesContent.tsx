@@ -1,5 +1,3 @@
-// src/modules/notes/ui/NotesContext.tsx
-
 'use client';
 
 import React, {
@@ -14,6 +12,7 @@ import React, {
 import { NoteEntity } from '../domain/NoteEntity';
 import { NotesService } from '../application/NotesService';
 import { processSyncQueue } from '@/lib/sync'; // our background sync runner
+import { isQueueEmpty } from '@/lib/sync';
 import { set } from 'lodash';
 
 /**
@@ -30,6 +29,8 @@ interface NotesContextValue {
     type: string
   ) => Promise<void>;
   deleteNote: (id: string) => void;
+  isSaving: boolean;
+  nextSaveIn: number;
 }
 
 // Create a React Context for notes
@@ -41,32 +42,62 @@ const NotesContext = createContext<NotesContextValue | undefined>(undefined);
 export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [notes, setNotes] = useState<NoteEntity[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [nextSync, setNextSync] = useState(10);
+  const [isSaving, setIsSaving] = useState(false);
+  // countdown (in seconds) until the next scheduled sync
+  const [nextSaveIn, setNextSaveIn] = useState(10);
   const serviceRef = useRef(new NotesService());
   const service    = serviceRef.current;
 
+  const runSync = useCallback(async () => {
+    const queueEmpty = await isQueueEmpty();
+    if (queueEmpty) {
+      setIsSaving(false);
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await processSyncQueue();
+    } finally {
+      setIsSaving(false);
+    }
+  }, []);
+
+  // initial load + periodic sync
   useEffect(() => {
-    async function init() {
-      const fetched = await service.fetchNotes();
+    // fetch from server (or fallback to IndexedDB) then sync any pending ops
+    service.fetchNotes().then(fetched => {
       setNotes(fetched);
       if (fetched.length) {
         setSelectedId(fetched[0].id);
       }
+      runSync();
+    });
 
-      await processSyncQueue();
-    }
-
-    init();
-
-    const interval = setInterval(processSyncQueue, 10_000);
-    window.addEventListener('online', processSyncQueue);
-
+    // every 10s, retry sync; also on browser re-connection
+    const interval = setInterval(runSync, 10_000);
+    window.addEventListener('online', runSync);
     return () => {
       clearInterval(interval);
-      window.removeEventListener('online', processSyncQueue);
+      window.removeEventListener('online', runSync);
     };
-  }, [service]);
+  }, [service, runSync]);
+
+  // countdown timer whenever we're not in the middle of saving
+  useEffect(() => {
+    // reset counter to full interval
+    setNextSaveIn(10);
+    if (!isSaving) {
+      let counter = 10;
+      const timer = setInterval(() => {
+        counter -= 1;
+        setNextSaveIn(counter);
+        if (counter <= 0) {
+          clearInterval(timer);
+        }
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [isSaving]);
 
   
   const addNote = useCallback(async () => {
@@ -131,6 +162,8 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
         selectNote,
         updateNote,
         deleteNote,
+        isSaving,
+        nextSaveIn
       }}
     >
       {children}

@@ -36,6 +36,7 @@ export default function EditorArea() {
   const lowlight = createLowlight(all);
   const [currentColor, setCurrentColor] = useState<string>('#858585');
 
+
   const editor = useEditor({
     extensions: [
       TextStyle,
