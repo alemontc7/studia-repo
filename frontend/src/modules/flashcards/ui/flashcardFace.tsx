@@ -1,22 +1,21 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { RotateCcw, Check } from 'lucide-react';
-import { Flashcard } from '../domain/flashcard';
+import { Flashcard, SessionCard } from '../domain/flashcard';
 import { ConceptualCardFace } from './ConceptualCardFace';
 import { CompletionCardFace } from './CompletionCardFace';
 import { CodeFillCardFace } from './CodeFillCardFace';
 
 interface FlashcardFaceProps {
-  card: Flashcard;
+  card: SessionCard;
   isFlipped: boolean;
   onFlip: () => void;
-  selectedAnswer: string | null;
-  onSelectAnswer: (answer: string) => void;
   selectedWords: string[];
   onToggleWord: (word: string) => void;
   onCheckAnswer: () => void;
   showResult: boolean;
   isAnswerCorrect: boolean | null;
+  isAttempted: boolean;
   onCardTypeChange: (type: Flashcard['type']) => void;
 }
 
@@ -24,16 +23,14 @@ export const FlashcardFace: React.FC<FlashcardFaceProps> = ({
   card,
   isFlipped,
   onFlip,
-  selectedAnswer,
-  onSelectAnswer,
   selectedWords,
   onToggleWord,
   onCheckAnswer,
   showResult,
   isAnswerCorrect,
-  onCardTypeChange
+  isAttempted,
+  onCardTypeChange,
 }) => {
-  // Update card type when card changes
   useEffect(() => {
     onCardTypeChange(card.type);
   }, [card.type, onCardTypeChange]);

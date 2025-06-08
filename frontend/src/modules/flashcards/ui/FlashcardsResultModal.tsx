@@ -45,7 +45,7 @@ export const FlashcardModal: React.FC<FlashcardModalProps> = ({
             <FlashcardSessionProvider cards={cards}>
                 <FlashcardDeck />
                 <div className="w-3/5 p-8 flex flex-col">
-                        <FlashcardViewer /> {/* Ya no necesita la prop 'cards' */}
+                        <FlashcardViewer />
                         <FlashcardNavigation />
                 </div>
             </FlashcardSessionProvider>

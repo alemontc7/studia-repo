@@ -1,39 +1,55 @@
 import React from 'react';
-import { Flashcard } from '../domain/flashcard';
-import { useFlashcardSession } from './useFlashcardSession';
+import { useSharedFlashcardSession } from './FlashcardSessionContext';
 import { useFlashcardState } from './useFlashcardState';
 import { FlashcardFace } from './flashcardFace';
+import { FlashcardAnswerService } from '../application/flashcardAnswerService';
+import { SessionSummary } from './SessionSummary';
 import { FlashcardDifficultySelector } from './FlashcardDifficultySelector';
-import { useSharedFlashcardSession } from './FlashcardSessionContext';
 
 interface FlashcardViewerProps {
-  //cards: Flashcard[];
+  onClose?: () => void;
 }
 
-export const FlashcardViewer: React.FC<FlashcardViewerProps> = () => {
-  const { currentCard } = useSharedFlashcardSession();
+export const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ onClose }) => {
+  const { 
+    currentCard, 
+    submitAnswer: submitAnswerToSession,
+    isSessionCompleted,
+    stats
+  } = useSharedFlashcardSession();
+  
   const { 
     viewState, 
     flipCard, 
-    selectAnswer, 
     toggleWordSelection, 
-    checkAnswer, 
-    setCardType,
-    resetState 
+    checkAnswer: checkAnswerInView,
+    resetState,
+    setCardType
   } = useFlashcardState();
 
-  // Reset state when card changes
   React.useEffect(() => {
     if (currentCard) {
       resetState();
     }
   }, [currentCard?.id, resetState]);
 
-  if (!currentCard) return null;
-
   const handleCheckAnswer = () => {
-    checkAnswer(currentCard);
+    if (!currentCard) return;
+    const { isCorrect } = FlashcardAnswerService.validateCompletionAnswer(
+      currentCard, 
+      viewState.selectedWords
+    );
+    checkAnswerInView(currentCard);
+    submitAnswerToSession(currentCard.id, isCorrect);
   };
+
+  if (isSessionCompleted && stats) {
+    return <SessionSummary stats={stats} onClose={onClose} />;
+  }
+
+  if (!currentCard) {
+    return null;
+  }
 
   return (
     <div className="flex-1 flex items-center justify-center">
@@ -42,20 +58,15 @@ export const FlashcardViewer: React.FC<FlashcardViewerProps> = () => {
           card={currentCard}
           isFlipped={viewState.isFlipped}
           onFlip={flipCard}
-          selectedAnswer={viewState.selectedAnswer}
-          onSelectAnswer={selectAnswer}
           selectedWords={viewState.selectedWords}
           onToggleWord={toggleWordSelection}
           onCheckAnswer={handleCheckAnswer}
           showResult={viewState.showResult}
           isAnswerCorrect={viewState.isAnswerCorrect}
+          isAttempted={currentCard.isAttempted} 
           onCardTypeChange={setCardType}
         />
-        
-        {/* Only show difficulty selector for conceptual cards or after showing result 
-        {(currentCard.type === 'conceptual' || viewState.showResult) && (
-          <FlashcardDifficultySelector />
-        )}*/}
+        {/* <FlashcardDifficultySelector />*/}
       </div>
     </div>
   );

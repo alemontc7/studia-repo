@@ -21,18 +21,18 @@ export interface Flashcard {
 
 export interface FlashcardSession {
   id: string;
-  cards: Flashcard[];
+  cards: SessionCard[];
   currentCardIndex: number;
-  completedCards: string[];
-  sessionStats: SessionStats;
+  stats: SessionStats;
+  isCompleted: boolean;
 }
 
 export interface SessionStats {
-  totalCards: number;
-  completedCards: number;
-  correctAnswers: number;
-  incorrectAnswers: number;
-  averageTimePerCard: number;
+    startTime: number;
+    endTime: number | null;
+    questionsAttempted: number;
+    questionsCorrect: number;
+    conceptualCardsReviewed: number;
 }
 
 export interface FlashcardProgress {
@@ -57,4 +57,9 @@ export interface FlashcardRepositoryPort {
   getFlashcards(): Promise<Flashcard[]>;
   saveProgress(progress: FlashcardProgress[]): Promise<void>;
   getProgress(): Promise<FlashcardProgress[]>;
+}
+
+export interface SessionCard extends Flashcard {
+    isAttempted: boolean;
+    isCorrect: boolean | null;
 }

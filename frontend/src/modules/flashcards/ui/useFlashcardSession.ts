@@ -1,60 +1,66 @@
-// view/hooks/useFlashcardSession.ts
 import { useState, useEffect, useCallback } from 'react';
-import { Flashcard, FlashcardRepositoryPort } from '../domain/flashcard';
+// 1. Importamos los nuevos tipos que creamos para el estado de la sesión
+import { Flashcard, SessionCard, SessionStats } from '../domain/flashcard';
 import { FlashcardSessionUseCase } from '../application/flashcardSessionUseCase';
-import { set } from 'lodash';
 
-// You'd inject this dependency in a real app
-const mockRepository: FlashcardRepositoryPort = {
-  getFlashcards: async () => [],
-  saveProgress: async () => {},
-  getProgress: async () => []
-};
+interface SessionHookState {
+  card: SessionCard | null;
+  progress: { current: number; total: number };
+  isCompleted: boolean;
+  stats: SessionStats | null;
+  direction: 'next' | 'previous' | 'initial';
+}
 
 export const useFlashcardSession = (cards: Flashcard[]) => {
-  const [sessionUseCase] = useState(() => new FlashcardSessionUseCase(mockRepository));
-  const [currentCard, setCurrentCard] = useState<Flashcard | null>(null);
-  const [progress, setProgress] = useState({ current: 0, total: 0 });
-  const [direction, setDirection] = useState<'next' | 'previous' |'initial'>('initial');
+  const [sessionUseCase] = useState(() => new FlashcardSessionUseCase());
+
+  const [sessionState, setSessionState] = useState<SessionHookState>({
+    ...sessionUseCase.getSessionState(),
+    direction: 'initial',
+  });
 
   useEffect(() => {
     if (cards.length > 0) {
-      sessionUseCase.initializeSession(cards).then(() => {
-        setCurrentCard(sessionUseCase.getCurrentCard());
-        setProgress(sessionUseCase.getProgress());
-      });
+      sessionUseCase.initializeSession(cards);
+      setSessionState(prevState => ({
+        ...prevState,
+        ...sessionUseCase.getSessionState(),
+      }));
     }
   }, [cards, sessionUseCase]);
 
+  const updateStateAfterAction = (newDirection: 'next' | 'previous' | 'initial') => {
+    setSessionState({
+      ...sessionUseCase.getSessionState(),
+      direction: newDirection,
+    });
+  };
+
   const goToNext = useCallback(() => {
-    setDirection('next');
-    if (sessionUseCase.goToNextCard()) {
-      setCurrentCard(sessionUseCase.getCurrentCard());
-      setProgress(sessionUseCase.getProgress());
-    }
+    sessionUseCase.goToNextCard();
+    updateStateAfterAction('next');
   }, [sessionUseCase]);
 
   const goToPrevious = useCallback(() => {
-    setDirection('previous');
-    if (sessionUseCase.goToPreviousCard()) {
-      setCurrentCard(sessionUseCase.getCurrentCard());
-      setProgress(sessionUseCase.getProgress());
-    }
+    sessionUseCase.goToPreviousCard();
+    updateStateAfterAction('previous');
   }, [sessionUseCase]);
 
-  const markAsCompleted = useCallback((cardId: string, difficulty: 'easy' | 'medium' | 'hard') => {
-    sessionUseCase.markCardAsCompleted(cardId, difficulty);
+  const submitAnswer = useCallback((cardId: string, isCorrect: boolean) => {
+    sessionUseCase.submitAnswer(cardId, isCorrect);
+    setSessionState(prevState => ({ ...prevState, ...sessionUseCase.getSessionState() }));
   }, [sessionUseCase]);
 
   return {
-    currentCard,
-    progress,
+    currentCard: sessionState.card,
+    progress: sessionState.progress,
+    isSessionCompleted: sessionState.isCompleted,
+    stats: sessionState.stats,
+    direction: sessionState.direction,
     goToNext,
     goToPrevious,
-    markAsCompleted,
-    canGoToNext: progress.current < progress.total,
-    canGoToPrevious: progress.current > 1,
-    isCompleted: sessionUseCase.isSessionCompleted(),
-    direction,
+    submitAnswer,
+    canGoToNext: sessionState.card ? sessionState.progress.current <= sessionState.progress.total : false,
+    canGoToPrevious: sessionState.card && sessionState.progress.current > 1,
   };
 };

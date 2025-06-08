@@ -1,87 +1,97 @@
-// application/use-cases/flashcard-session.use-case.ts
-import { Flashcard, FlashcardSession, FlashcardProgress } from '../domain/flashcard';
-import { FlashcardSessionPort } from '../domain/flashcarsSessionPort';
-import { FlashcardRepositoryPort } from '../domain/flashcardRepositoryPort';
+import { Flashcard, SessionCard, SessionStats, FlashcardSession } from '../domain/flashcard';
 
-export class FlashcardSessionUseCase implements FlashcardSessionPort {
-  private session: FlashcardSession | null = null;
-
-  constructor(private flashcardRepository: FlashcardRepositoryPort) {}
-
-  async initializeSession(cards: Flashcard[]): Promise<FlashcardSession> {
-    this.session = {
-      id: crypto.randomUUID(),
-      cards,
-      currentCardIndex: 0,
-      completedCards: [],
-      sessionStats: {
-        totalCards: cards.length,
-        completedCards: 0,
-        correctAnswers: 0,
-        incorrectAnswers: 0,
-        averageTimePerCard: 0
-      }
-    };
-    return this.session;
-  }
-
-  getCurrentCard(): Flashcard | null {
-    if (!this.session || this.session.currentCardIndex >= this.session.cards.length) {
-      return null;
+export class FlashcardSessionUseCase {
+    private session: FlashcardSession | null = null;
+    
+    constructor() {}
+    
+    initializeSession(cards: Flashcard[]): void {
+        
+        if (cards.length === 0) return;
+        const sessionCards: SessionCard[] = cards.map(card => ({
+            ...card,
+            isAttempted: false,
+            isCorrect: null,
+        }));
+        
+        this.session = {
+            id: crypto.randomUUID(),
+            cards: sessionCards,
+            currentCardIndex: 0,
+            isCompleted: false,
+            stats: {
+                startTime: Date.now(),
+                endTime: null,
+                questionsAttempted: 0,
+                questionsCorrect: 0,
+                conceptualCardsReviewed: 0,
+            },
+        };
     }
-    return this.session.cards[this.session.currentCardIndex];
-  }
-
-  goToNextCard(): boolean {
-    if (!this.session || this.session.currentCardIndex >= this.session.cards.length - 1) {
-      return false;
+    
+    submitAnswer(cardId: string, isCorrect: boolean): void {
+        if (!this.session) return;
+        const card = this.session.cards.find(c => c.id === cardId);
+        
+        if (!card || card.isAttempted) {
+            return;
+        }
+        
+        card.isAttempted = true;
+        card.isCorrect = isCorrect;
+        this.session.stats.questionsAttempted++;
+        if (isCorrect) {
+            this.session.stats.questionsCorrect++;
+        }
     }
+    
+    goToNextCard(): boolean {
+        if (!this.session) return false;
+        const currentCard = this.session.cards[this.session.currentCardIndex];
+        
+        if (currentCard.type === 'conceptual' && !currentCard.isAttempted) {
+            this.session.stats.conceptualCardsReviewed++;
+            currentCard.isAttempted = true;
+        }
+        
+        if (this.session.currentCardIndex >= this.session.cards.length - 1) {
+            if (!this.session.isCompleted) {
+                this.session.isCompleted = true;
+                this.session.stats.endTime = Date.now();
+            }
+        return false;
+    }
+    
     this.session.currentCardIndex++;
     return true;
-  }
+}
 
-  goToPreviousCard(): boolean {
+goToPreviousCard(): boolean {
     if (!this.session || this.session.currentCardIndex <= 0) {
-      return false;
+        return false;
     }
     this.session.currentCardIndex--;
     return true;
-  }
+}
 
-  markCardAsCompleted(cardId: string, difficulty: 'easy' | 'medium' | 'hard'): void {
-    if (!this.session) return;
-
-    if (!this.session.completedCards.includes(cardId)) {
-      this.session.completedCards.push(cardId);
-      this.session.sessionStats.completedCards++;
+getSessionState(): {
+    card: SessionCard | null;
+    progress: { current: number; total: number };
+    isCompleted: boolean;
+    stats: SessionStats | null;
+} {
+    if (!this.session) {
+        return { card: null, progress: { current: 0, total: 0 }, isCompleted: false, stats: null };
     }
-
-    // save progress asynchronously
-    this.saveCardProgress(cardId, difficulty);
-  }
-
-  getProgress(): { current: number; total: number } {
-    if (!this.session) return { current: 0, total: 0 };
-    return {
-      current: this.session.currentCardIndex + 1,
-      total: this.session.cards.length
-    };
-  }
-
-  isSessionCompleted(): boolean {
-    if (!this.session) return false;
-    return this.session.completedCards.length === this.session.cards.length;
-  }
-
-  private async saveCardProgress(cardId: string, difficulty: 'easy' | 'medium' | 'hard'): Promise<void> {
-    const progress: FlashcardProgress[] = [{
-      cardId,
-      isCompleted: true,
-      difficulty,
-      timeSpent: 0, // You'd track this in a real implementation
-      attempts: 1
-    }];
     
-    await this.flashcardRepository.saveProgress(progress);
-  }
+    return {
+        card: this.session.cards[this.session.currentCardIndex],
+        progress: {
+            current: this.session.currentCardIndex + 1,
+            total: this.session.cards.length,
+        },
+        isCompleted: this.session.isCompleted,
+        stats: this.session.stats,
+    };
+}
 }

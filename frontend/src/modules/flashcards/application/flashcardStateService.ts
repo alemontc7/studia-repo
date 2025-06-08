@@ -31,7 +31,6 @@ export class FlashcardStateService {
     this.state = { 
       ...this.state, 
       cardType: type,
-      // Reset state when card type changes
       selectedWords: [],
       selectedAnswer: null,
       isAnswerCorrect: null,
@@ -42,7 +41,6 @@ export class FlashcardStateService {
   }
 
   flipCard(): void {
-    // Only allow flipping for conceptual cards
     if (this.state.cardType === 'conceptual') {
       this.state = { ...this.state, isFlipped: !this.state.isFlipped };
       this.notifyListeners();
@@ -59,10 +57,8 @@ export class FlashcardStateService {
     const index = currentSelected.indexOf(word);
     
     if (index > -1) {
-      // Remove word if already selected
       currentSelected.splice(index, 1);
     } else {
-      // Add word if not selected
       currentSelected.push(word);
     }
     
@@ -71,11 +67,9 @@ export class FlashcardStateService {
   }
 
   checkAnswer(correctWords: string[], challenge: string): void {
-    // Replace ___ in challenge with selected words in order
     let processedChallenge = challenge;
     const blanks = challenge.match(/___/g) || [];
     
-    // Check if user selected the right number of words
     if (this.state.selectedWords.length !== blanks.length) {
       this.state = { 
         ...this.state, 
@@ -86,13 +80,11 @@ export class FlashcardStateService {
       return;
     }
 
-    // Replace blanks with selected words in order
     let wordIndex = 0;
     processedChallenge = processedChallenge.replace(/___/g, () => {
       return this.state.selectedWords[wordIndex++] || '___';
     });
 
-    // Check if the selected words match the correct solution
     const isCorrect = this.arraysEqual(this.state.selectedWords, correctWords.slice(0, blanks.length));
     
     this.state = { 
@@ -122,7 +114,7 @@ export class FlashcardStateService {
       showHint: false,
       isAnswerCorrect: null,
       showResult: false,
-      cardType: this.state.cardType // Keep the card type
+      cardType: this.state.cardType
     };
     this.notifyListeners();
   }

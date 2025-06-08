@@ -19,7 +19,7 @@ export const FlashcardsFormModal: React.FC<FlashcardsFormModalProps> = (
   const [selectedModel, setSelectedModel] = useState<string>('gpt-4');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFinished, setIsFinished] = useState<boolean>(false);
-  const [flashcards, setFlashcards] = useState<any[]>([]); // Adjust type as needed
+  const [flashcards, setFlashcards] = useState<any[]>([]);
 
   const onGenerate = async () => {
     setIsLoading(true);
@@ -28,11 +28,8 @@ export const FlashcardsFormModal: React.FC<FlashcardsFormModalProps> = (
       const flashcards = await flashcardService.createFlashcard(selectedModel, 'note-id-placeholder');
       setFlashcards(flashcards);
       console.log('Flashcards generated:', flashcards);
-      // After generation, close loading and modal or handle generated data
       setIsLoading(false);
       setIsFinished(true);
-      // Note: You might want to handle the flashcards data here before closing
-      // onClose();
     } catch (error) {
       console.error('Error generating flashcards:', error);
       setIsLoading(false);
