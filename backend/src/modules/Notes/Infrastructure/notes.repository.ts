@@ -76,3 +76,29 @@ export async function deleteNote(noteId: string): Promise<Boolean>{
     }
     return true;
 }
+
+export async function fetchNoteById(noteId: string): Promise<NoteEntity | null> {
+    const { data, error } = await supabase
+        .from('notes')
+        .select('id, user_id, title, content, created_at, updated_at')
+        .eq('id', noteId)
+        .single();
+
+    if (error) {
+        console.error("Error fetching note:", error);
+        throw new Error("Error fetching note");
+    }
+
+    if (!data) {
+        return null;
+    }
+
+    return {
+        id: data.id,
+        userId: data.user_id,
+        title: data.title,
+        content: data.content,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
+    };
+}

@@ -10,4 +10,5 @@ router.use(requireAuth);
 router.post('/', (req, res) => notesControllerInstance.saveNote(req,res));
 router.delete('/', (req, res) => notesControllerInstance.deleteNote(req,res));
 router.get('/', (req, res) => notesControllerInstance.getNotes(req,res));
+router.get('/singlenote/:id', (req, res) => notesControllerInstance.fetchNoteById(req,res));
 export default router;

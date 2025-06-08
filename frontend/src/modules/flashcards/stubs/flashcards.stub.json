@@ -1,0 +1,214 @@
+[
+    {
+        "id": "f85a135a-6bfa-48f6-9664-37f8681160a3",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "conceptual",
+        "challenge": "What is polymorphism in object-oriented programming?",
+        "solution": "Polymorphism refers to 'many forms,' allowing different objects to respond to the same method in distinct ways. For example, calling `animal.hacerSonido()` might result in a dog barking or a cat meowing.",
+        "tags": [
+            "polymorphism",
+            "OOP",
+            "methods"
+        ],
+        "solutionWords": [],
+        "difficulty": "easy",
+        "contextSnippet": "polimorfismo = muchas formas\n- objetos diferentes pueden responder al mismo metodo pero de manera distinta",
+        "hint": "It allows objects to behave differently to the same method call.",
+        "explanation": "",
+        "createdAt": "2025-06-07T20:29:39.501+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    },
+    {
+        "id": "66bd596d-ec3f-46b6-a395-c441c7b67962",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "completion",
+        "challenge": "In an interface, all methods are ___ and abstract by default.",
+        "solution": "In an interface, all methods are public and abstract by default.",
+        "tags": [
+            "interfaces",
+            "OOP",
+            "Java"
+        ],
+        "solutionWords": [
+            "public",
+            "private",
+            "protected"
+        ],
+        "difficulty": "easy",
+        "contextSnippet": "- todos los metodos son public abstract por defecto",
+        "hint": "Think about the visibility and abstract nature of interface methods.",
+        "explanation": "Interface methods are public and abstract by design to ensure implementing classes define consistent behavior.",
+        "createdAt": "2025-06-07T20:29:39.503+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    },
+    {
+        "id": "1f17c69c-e198-46d7-8f70-be781706a3a5",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "code_fill",
+        "challenge": "```java\ninterface Volador\n    void ___;\n    void aterrizar;\n\nclass Pajaro implements Volador\n    public void volar\n        system.out.println pajaro volando;\n    \n    public void aterrizar\n        system.out.println pajaro aterrizando;\n```",
+        "solution": "```java\ninterface Volador\n    void volar;\n    void aterrizar;\n\nclass Pajaro implements Volador\n    public void volar\n        system.out.println pajaro volando;\n    \n    public void aterrizar\n        system.out.println pajaro aterrizando;\n```",
+        "tags": [
+            "Java",
+            "interfaces",
+            "OOP"
+        ],
+        "solutionWords": [
+            "volar",
+            "correr",
+            "nadar"
+        ],
+        "difficulty": "medium",
+        "contextSnippet": "```java\ninterface Volador\n    void volar;\n    void aterrizar;",
+        "hint": "This method corresponds to the flying action.",
+        "explanation": "The `volar` method in the `Volador` interface is intentionally left blank to test understanding of interface method declarations.",
+        "createdAt": "2025-06-07T20:29:39.503+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    },
+    {
+        "id": "18a72e08-390a-475f-a28a-d7d7b2b026d0",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "conceptual",
+        "challenge": "What is the difference between a class and an abstract class in Java?",
+        "solution": "An abstract class cannot be instantiated directly and may contain a mix of abstract (no body) and concrete methods. Regular classes can be instantiated and must implement any abstract methods from their parent class, if any.",
+        "tags": [
+            "abstract classes",
+            "OOP",
+            "Java"
+        ],
+        "solutionWords": [],
+        "difficulty": "medium",
+        "contextSnippet": "- no se pueden instanciar directamente\n- pueden tener metodos abstractos y concretos",
+        "hint": "Focus on instantiation and method types.",
+        "explanation": "",
+        "createdAt": "2025-06-07T20:29:39.503+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    },
+    {
+        "id": "f7873099-b404-4f9f-bc33-70a11ef20192",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "completion",
+        "challenge": "Compositional relationships are typically described as ___ relationships.",
+        "solution": "Compositional relationships are typically described as 'has-a' relationships.",
+        "tags": [
+            "composition",
+            "OOP"
+        ],
+        "solutionWords": [
+            "has-a",
+            "is-a",
+            "does-a"
+        ],
+        "difficulty": "easy",
+        "contextSnippet": "- composicion: \"tiene un\" relationship",
+        "hint": "Think about how an entity possesses another entity.",
+        "explanation": "Compositional relationships are 'has-a' because they define ownership or part-whole relationships rather than inheritance.",
+        "createdAt": "2025-06-07T20:29:39.503+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    },
+    {
+        "id": "7587de9f-536a-4abe-bc5e-8b01a4ce679e",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "code_fill",
+        "challenge": "```java\ntry\n    int division = 10 / 0;\ncatch ___ e\n    system.out.println \"division por zero\";\nfinally\n    system.out.println \"siempre se ejecuta\";\n```",
+        "solution": "```java\ntry\n    int division = 10 / 0;\ncatch ArithmeticException e\n    system.out.println \"division por zero\";\nfinally\n    system.out.println \"siempre se ejecuta\";\n```",
+        "tags": [
+            "exceptions",
+            "try-catch",
+            "Java"
+        ],
+        "solutionWords": [
+            "ArithmeticException",
+            "NullPointerException",
+            "IOException"
+        ],
+        "difficulty": "medium",
+        "contextSnippet": "catch ArithmeticException e\n    system.out.println \"division por zero\";",
+        "hint": "This exception is specific to arithmetic operations.",
+        "explanation": "The correct answer is `ArithmeticException` because division by zero triggers this particular runtime exception.",
+        "createdAt": "2025-06-07T20:29:39.503+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    },
+    {
+        "id": "136b7f7c-e7a1-4688-8273-46509263fa3e",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "conceptual",
+        "challenge": "Describe the purpose of the Model-View-Controller (MVC) architecture.",
+        "solution": "The MVC architecture separates responsibilities in software into three layers: Model for managing data and business logic, View for the user interface, and Controller for handling user interaction.",
+        "tags": [
+            "MVC",
+            "architecture",
+            "design patterns"
+        ],
+        "solutionWords": [],
+        "difficulty": "medium",
+        "contextSnippet": "- Modelo: datos y logica de negocio\n- Vista: interfaz de usuario\n- Controlador: maneja la interaccion",
+        "hint": "Think about separating concerns in software design.",
+        "explanation": "",
+        "createdAt": "2025-06-07T20:29:39.503+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    },
+    {
+        "id": "bf8447a5-3d6c-4fca-8630-4eaea77d5e66",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "completion",
+        "challenge": "In Java, the ___ keyword is used to declare an abstract class.",
+        "solution": "In Java, the abstract keyword is used to declare an abstract class.",
+        "tags": [
+            "abstract classes",
+            "Java",
+            "OOP"
+        ],
+        "solutionWords": [
+            "abstract",
+            "final",
+            "static"
+        ],
+        "difficulty": "easy",
+        "contextSnippet": "- keyword: abstract\n- no se pueden instanciar directamente",
+        "hint": "This keyword signifies that the class cannot be instantiated directly.",
+        "explanation": "The `abstract` keyword is integral to defining classes with abstract (non-implemented) methods.",
+        "createdAt": "2025-06-07T20:29:39.503+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    },
+    {
+        "id": "3408e7a2-0ccf-48d5-a9c3-35159b2fc4ce",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "conceptual",
+        "challenge": "What is the difference between checked and unchecked exceptions in Java?",
+        "solution": "Checked exceptions are exceptions that must be either caught or declared in the method signature using `throws`. Unchecked exceptions are subclasses of `RuntimeException` and do not require explicit handling.",
+        "tags": [
+            "exceptions",
+            "Java"
+        ],
+        "solutionWords": [],
+        "difficulty": "medium",
+        "contextSnippet": "- checked vs unchecked exceptions",
+        "hint": "One type requires handling, the other does not.",
+        "explanation": "",
+        "createdAt": "2025-06-07T20:29:39.503+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    },
+    {
+        "id": "0c1103e9-dc1d-490f-9dab-abdda511f3a1",
+        "noteId": "ae807cc3-d7ce-42a1-8048-c3ad65b9855d",
+        "type": "code_fill",
+        "challenge": "```java\nConnection conn = DriverManager.getConnection \"jdbc:mysql://localhost/bd\", \"___\", \"pass\";\nStatement stmt = conn.createStatement();\nResultSet rs = stmt.executeQuery \"SELECT * FROM usuarios\";\n```",
+        "solution": "```java\nConnection conn = DriverManager.getConnection \"jdbc:mysql://localhost/bd\", \"user\", \"pass\";\nStatement stmt = conn.createStatement();\nResultSet rs = stmt.executeQuery \"SELECT * FROM usuarios\";\n```",
+        "tags": [
+            "JDBC",
+            "databases",
+            "Java"
+        ],
+        "solutionWords": [
+            "user",
+            "admin",
+            "database"
+        ],
+        "difficulty": "medium",
+        "contextSnippet": "Connection conn = DriverManager.getConnection \"jdbc:mysql://localhost/bd\", \"user\", \"pass\";",
+        "hint": "This placeholder represents the database username.",
+        "explanation": "The username is essential for authenticating the connection to the database.",
+        "createdAt": "2025-06-07T20:29:39.503+00:00",
+        "updatedAt": "2025-06-07T20:29:39.503+00:00"
+    }
+]

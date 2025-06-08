@@ -12,6 +12,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@azure-rest/ai-inference": "^1.0.0-beta.6",
+    "@azure/core-auth": "^1.9.0",
+    "@azure/core-sse": "^2.2.0",
     "@supabase/supabase-js": "^2.49.1",
     "backend": "file:",
     "bcrypt": "^5.1.1",
@@ -33,7 +36,8 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.10",
     "@types/nodemailer": "^6.4.17",
-    "dotenv": "^16.4.7",
+    "@types/uuid": "^10.0.0",
+    "dotenv": "^16.5.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.2"
   }

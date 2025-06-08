@@ -30,6 +30,7 @@ interface NotesContextValue {
   ) => Promise<void>;
   deleteNote: (id: string) => void;
   isSaving: boolean;
+  isSuccess: boolean;
   nextSaveIn: number;
 }
 
@@ -43,6 +44,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
   const [notes, setNotes] = useState<NoteEntity[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(true);
   // countdown (in seconds) until the next scheduled sync
   const [nextSaveIn, setNextSaveIn] = useState(10);
   const serviceRef = useRef(new NotesService());
@@ -56,11 +58,18 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
     }
     setIsSaving(true);
     try {
-      await processSyncQueue();
+      const val = await processSyncQueue();
+      if (val) {
+        setIsSuccess(true);
+        console.log("is the value succesful?", isSuccess);
+      } else {
+        setIsSuccess(false);
+        console.warn('Sync failed, will retry later');
+      }
     } finally {
       setIsSaving(false);
     }
-  }, []);
+  }, [isSuccess]);
 
   // initial load + periodic sync
   useEffect(() => {
@@ -163,6 +172,7 @@ export const NotesProvider = ({ children }: { children: ReactNode }) => {
         updateNote,
         deleteNote,
         isSaving,
+        isSuccess,
         nextSaveIn
       }}
     >

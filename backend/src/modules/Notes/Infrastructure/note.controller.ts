@@ -53,4 +53,20 @@ export default class NotesController{
             });
         }
     }
+
+    async fetchNoteById(req: Request, res: Response): Promise<void> {
+        try {
+            const noteId = req.params.id;
+            const note = await this.notesService.fetchNoteById(noteId);
+            if (note) {
+                res.status(200).json(note);
+            } else {
+                res.status(404).json({ message: 'Note not found' });
+            }
+        } catch (error: any) {
+            res.status(400).json({
+                message: error.message || 'Error while fetching note by ID'
+            });
+        }
+    }
 }
