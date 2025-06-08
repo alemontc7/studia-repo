@@ -7,6 +7,7 @@ import { FlashcardViewer } from './FlashcardViewer';
 import { FlashcardNavigation } from './FlashcardNavigation';
 import { Flashcard } from '../domain/flashcard'
 import { FlashcardSessionProvider } from './FlashcardSessionContext';
+import { StudyView } from './StudyView';
 
 interface FlashcardModalProps {
   isOpen: boolean;
@@ -43,11 +44,7 @@ export const FlashcardModal: React.FC<FlashcardModalProps> = ({
               <X className="w-5 h-5" />
             </button>
             <FlashcardSessionProvider cards={cards}>
-                <FlashcardDeck />
-                <div className="w-3/5 p-8 flex flex-col">
-                        <FlashcardViewer />
-                        <FlashcardNavigation />
-                </div>
+                <StudyView onClose={onClose} />
             </FlashcardSessionProvider>
 
           </motion.div>

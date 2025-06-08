@@ -4,7 +4,7 @@ import { useFlashcardSession } from './useFlashcardSession';
 import { useSharedFlashcardSession } from './FlashcardSessionContext';
 
 export const FlashcardNavigation: React.FC = () => {
-  const { progress, goToPrevious, goToNext, canGoToPrevious, canGoToNext } = useSharedFlashcardSession();
+  const { progress, goToPrevious, goToNext, canGoToPrevious, canGoToNext, isSessionCompleted } = useSharedFlashcardSession();
 
   return (
     <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
@@ -20,7 +20,7 @@ export const FlashcardNavigation: React.FC = () => {
       <button
         onClick={goToNext}
         disabled={!canGoToNext}
-        className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#0B87DC] to-[#0B87DC] text-white rounded-xl hover:from-[#0B87DC] hover:to-green-500 transition-all ease-out duration-1000 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#0B87DC] to-[#0B87DC] text-white rounded-xl hover:from-[#0B87DC] hover:to-[#0B87DC]/75 transition-all ease-out duration-1000 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span>Siguiente</span>
         <ChevronRight className="w-4 h-4" />

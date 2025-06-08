@@ -151,6 +151,7 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
       <FlashcardsFormModal
         isOpen={flashcardsModalOpen}
         onClose={() => setFlashcardsModalOpen(false)}
+        noteId={selectedId || ''}
       />
 
       <FlashcardModal

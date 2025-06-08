@@ -3,9 +3,9 @@ import flashcards from "../stubs/flashcards.stub.json";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:7000/api';
 
-export async function createFlashcardApi(noteId: string ,model: string): Promise<Flashcard[]> {
+export async function createFlashcardApi(model: string, noteId: string ): Promise<Flashcard[]> {
     const response = await fetch(`${API_BASE}/flashcards/`, {
-    method: 'GET',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ noteId, model }),
     credentials: 'include',

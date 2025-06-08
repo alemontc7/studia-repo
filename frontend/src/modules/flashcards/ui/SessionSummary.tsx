@@ -56,7 +56,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({ stats, onClose }
 
       <button
         onClick={onClose}
-        className="mt-12 px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
+        className="mt-12 px-8 py-3 bg-[#0B87DC] text-white font-semibold rounded-lg shadow-lg hover:bg-[#0B87DC] transition-all duration-300 transform hover:scale-105"
       >
         Finalizar Sesión
       </button>

@@ -8,12 +8,14 @@ import { WaitGeneration } from './waitGeneration';
 interface FlashcardsFormModalProps {
   isOpen: boolean;
   onClose: () => void;
+  noteId?: string;
 }
 
 export const FlashcardsFormModal: React.FC<FlashcardsFormModalProps> = (
   { 
     isOpen, 
     onClose, 
+    noteId = ''
   }
   ) => {
   const [selectedModel, setSelectedModel] = useState<string>('gpt-4');
@@ -25,7 +27,7 @@ export const FlashcardsFormModal: React.FC<FlashcardsFormModalProps> = (
     setIsLoading(true);
     const flashcardService = new FlashcardService();
     try {
-      const flashcards = await flashcardService.createFlashcard(selectedModel, 'note-id-placeholder');
+      const flashcards = await flashcardService.createFlashcard(selectedModel, noteId);
       setFlashcards(flashcards);
       console.log('Flashcards generated:', flashcards);
       setIsLoading(false);

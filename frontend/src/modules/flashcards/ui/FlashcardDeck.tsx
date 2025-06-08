@@ -31,11 +31,11 @@ const cardVariants = {
 };
 
 export const FlashcardDeck: React.FC = () => {
-  const { currentCard, progress, direction } = useSharedFlashcardSession();
-  console.log('Current Card:', currentCard);
+  const { currentCard, progress, direction, isSessionCompleted } = useSharedFlashcardSession();
+  console.log('Current Card:', currentCard, isSessionCompleted);
 
   if (!currentCard) return null;
-
+  
   return (
     <div className="w-2/5 bg-gradient-to-br from-gray-50 to-gray-100 p-8 flex flex-col justify-center items-center border-r border-gray-200/50 overflow-hidden">
       <div className="relative">
@@ -62,7 +62,7 @@ export const FlashcardDeck: React.FC = () => {
           <div className="relative w-full h-full bg-white rounded-xl shadow-xl cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-2xl border border-gray-200 overflow-hidden group">
             <div className="p-6 h-full flex flex-col justify-between">
               <div>
-                <div className="w-8 h-1 bg-gradient-to-r from-[#0B87DC] to-green-500 rounded-full mb-4"></div>
+                <div className="w-8 h-1 bg-gradient-to-r from-[#0B87DC] to-[#0B87DC]/50 rounded-full mb-4"></div>
                 <p className="text-sm font-medium text-gray-800 leading-relaxed line-clamp-4">
                   {currentCard.challenge}
                 </p>
@@ -86,7 +86,7 @@ export const FlashcardDeck: React.FC = () => {
           <p className="text-sm text-gray-500">Tarjeta {progress.current} de {progress.total}</p>
           <div className="w-32 h-1 bg-gray-200 rounded-full mt-2 mx-auto">
             <div 
-              className="h-1 bg-gradient-to-r from-[#0B87DC] to-green-500 rounded-full transition-all duration-300"
+              className="h-1 bg-gradient-to-r from-[#0B87DC] to-[#0B87DC]/50 rounded-full transition-all duration-300"
               style={{ width: `${(progress.current / progress.total) * 100}%` }}
             ></div>
           </div>
