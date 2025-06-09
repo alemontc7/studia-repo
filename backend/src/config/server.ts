@@ -42,9 +42,12 @@ app.use('/', (req, res) => {res.send('Hello from studia api');});
 
 if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 7000;
-  app.listen(PORT, () => {
+
+  const server = app.listen(PORT, () => {
     console.log(`Servidor corriendo en ${PORT}`);
   });
+  server.timeout = 180000;
+  server.headersTimeout = 180000;
 }
 
 export default app;
