@@ -11,12 +11,12 @@ interface SyncResult {
   lastStatus: number;
 }
 
-export async function isQueueEmpty(): Promise<Boolean>{
+export async function isQueueEmpty(): Promise<boolean>{
   const ops: SyncOp[] = await db.syncQueue.toArray();
   return ops.length === 0;
 }
 
-export async function processSyncQueue(): Promise<Boolean> {
+export async function processSyncQueue(): Promise<boolean> {
   const ops: SyncOp[] = await db.syncQueue.toArray();
   let bool = true;
   for (const op of ops) {
@@ -27,7 +27,7 @@ export async function processSyncQueue(): Promise<Boolean> {
             try {
               await createNoteApi(op.note);
               bool = true;
-            } catch (err: any) {
+            } catch (err: unknown) {
               bool = false;
               return false;
             }
@@ -39,7 +39,7 @@ export async function processSyncQueue(): Promise<Boolean> {
             try {
               await deleteNoteApi(op.noteId);
               bool = true;
-            } catch (err: any) {
+            } catch (err: unknown) {
               bool = false;
               return false;
             }

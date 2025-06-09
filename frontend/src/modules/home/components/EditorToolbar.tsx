@@ -1,6 +1,6 @@
 'use client';
 
-import React, { use, useEffect, useState } from 'react';
+import React, { use, useEffect, useMemo, useState } from 'react';
 import { type Editor } from '@tiptap/react';
 import { Bold, Italic, List, Code, Layers, Plus, Network} from 'lucide-react';
 import '../styles/EditorToolbar.css';
@@ -11,6 +11,7 @@ import { FlashcardService } from '../../flashcards/application/flashcardService'
 import { FlashcardModal } from '@/modules/flashcards/ui/FlashcardsResultModal';
 import { GraphicOrganizerService } from '@/modules/graphicOrganizers/application/graphicOrganizerService';
 import { OrganizerModal } from '@/modules/graphicOrganizers/ui/OrganizerModal';
+import { Flashcard } from '@/modules/flashcards/domain/flashcard';
 
 interface ToolbarProps {
   editor: Editor | null;
@@ -21,18 +22,25 @@ interface ToolbarProps {
 // This function would cause infinite recursion and should be removed or fixed
 // If you need to extend or modify FlashcardService, do it in the service file itself
 
-const flashcardService = new FlashcardService();
-const graphicOrganizerService = new GraphicOrganizerService();
+//const flashcardService = new FlashcardService();
+//const graphicOrganizerService = new GraphicOrganizerService();
 
 export default function EditorToolbar({ editor, currentColor, setCurrentColor }: ToolbarProps) {
-  if (!editor) return null;
-
   const { isSaving, isSuccess, selectedId, notes } = useNotes();
   const [showSaving, setShowSaving] = useState(false);
   const [flashcardsModalOpen, setFlashcardsModalOpen] = useState(false);
   const [showFlashcards, setShowFlashcards] = useState(false);
-  const [flashcards, setFlashcards] = useState<any[]>([]);
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]); // Usamos el tipo correcto
   
+  // Usamos useMemo para que las instancias de los servicios no se creen en cada render
+  const flashcardService = useMemo(() => new FlashcardService(), []);
+  const organizerService = useMemo(() => new GraphicOrganizerService(), []);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mermaidCode, setMermaidCode] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     async function fetchFlashcards() {
       if (selectedId) {
@@ -42,20 +50,57 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         setFlashcards([]);
       }
     }
-    
     fetchFlashcards();
-  }, [selectedId]);
-  
+  }, [selectedId, flashcardService]); // Añadimos flashcardService a las dependencias
+
   const hasFlashcards = flashcards.length > 0;
 
   useEffect(() =>{
     if(isSaving) {
       setShowSaving(true);
-      setTimeout(() => {
+      const timer = setTimeout(() => { // Guardamos el timer para limpiarlo
         setShowSaving(false);
       }, 2000);
+      return () => clearTimeout(timer); // Buena práctica: limpiar el timer
     }
   }, [isSaving]);
+
+  // ==================================================================
+  // PASO 2: LA LÓGICA CONDICIONAL VIENE DESPUÉS DE LOS HOOKS
+  // ==================================================================
+  if (!editor) {
+    // Podemos devolver un esqueleto o nada, pero los hooks ya se han ejecutado.
+    return null; 
+  }
+  
+  // El resto de la lógica y manejadores de eventos pueden ir aquí
+  const handleOpenOrganizer = async () => {
+    setIsModalOpen(true);
+    setError(null);
+    setIsLoading(true);
+    try {
+      const existingOrganizer = await organizerService.obtainGraphicOrganizer(selectedId || '');
+      setMermaidCode(existingOrganizer.mermaidCode);
+    } catch (e) {
+      try {
+        const newOrganizer = await organizerService.makeGraphicOrganizer(selectedId || '');
+        setMermaidCode(newOrganizer.mermaidCode);
+      } catch (creationError: unknown) { // Usamos 'unknown' en lugar de 'any'
+        if (creationError instanceof Error) {
+            setError(creationError.message);
+        } else {
+            setError("No se pudo generar el organizador.");
+        }
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setMermaidCode(null); 
+  };
 
   const btnBase = `
     flex items-center justify-center
@@ -63,48 +108,6 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
     rounded-md
     transition-colors duration-150
   `;
-
-  const [organizerService] = useState(() => new GraphicOrganizerService());
-
-  // --- Estados que controlarán el flujo ---
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [mermaidCode, setMermaidCode] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleOpenOrganizer = async () => {
-    // 1. Abrimos el modal inmediatamente y limpiamos estados anteriores.
-    setIsModalOpen(true);
-    setError(null);
-    setIsLoading(true); // Siempre empezamos en estado de carga mientras verificamos.
-
-    try {
-      // 2. Intentamos OBTENER un organizador existente primero.
-      const existingOrganizer = await organizerService.obtainGraphicOrganizer(selectedId || '');
-      // parse that existingOrganizer to json
-      setMermaidCode(existingOrganizer.mermaidCode);
-    } catch (e) {
-      // 3. Si `obtain` falla (probablemente un 404), significa que no existe.
-      //    Así que procedemos a CREARLO.
-      console.log("Organizer not found, creating a new one...");
-      try {
-        const newOrganizer = await organizerService.makeGraphicOrganizer(selectedId || '');
-        setMermaidCode(newOrganizer.mermaidCode);
-      } catch (creationError: any) {
-        // Si la creación también falla, mostramos un error.
-        setError(creationError.message || "No se pudo generar el organizador.");
-      }
-    } finally {
-      // 4. Pase lo que pase, al final dejamos de cargar.
-      setIsLoading(false);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    // Opcional: limpiar el código al cerrar para que siempre se recargue
-    setMermaidCode(null); 
-  };
 
   return (
     <div className='sticky top-0 z-20 pb-8 pt-8'>

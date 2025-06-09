@@ -28,7 +28,7 @@ export class FlashcardAnswerService {
       return card.challenge;
     }
 
-    let challenge = card.challenge;
+    const challenge = card.challenge;
     let wordIndex = 0;
 
     return challenge.replace(/___/g, () => {
