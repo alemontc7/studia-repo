@@ -25,7 +25,8 @@
     "express-rate-limit": "^7.5.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.10.1",
-    "parser": "^0.1.4"
+    "parser": "^0.1.4",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
