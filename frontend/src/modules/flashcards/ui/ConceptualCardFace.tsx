@@ -28,7 +28,7 @@ export const ConceptualCardFace: React.FC<ConceptualCardFaceProps> = ({
       >
         {/* Front Face - Challenge */}
         <div
-          className="absolute w-full h-100 bg-gradient-to-br from-[#0B87DC]/5 to-[#0B87DC]/10 rounded-2xl shadow-xl border border-[#0B87DC]/5 overflow-hidden"
+          className="absolute w-full bg-gradient-to-br from-[#0B87DC]/5 to-[#0B87DC]/10 rounded-2xl shadow-xl border border-[#0B87DC]/5 overflow-hidden"
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="p-15 h-full flex flex-col justify-between relative">
@@ -55,7 +55,7 @@ export const ConceptualCardFace: React.FC<ConceptualCardFaceProps> = ({
 
         {/* Back Face - Solution */}
         <div
-          className="absolute w-full h-100 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden"
+          className="absolute w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden"
           style={{ 
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)'

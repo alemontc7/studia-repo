@@ -19,11 +19,6 @@ interface ToolbarProps {
   setCurrentColor: (color: string) => void;
 }
 
-// This function would cause infinite recursion and should be removed or fixed
-// If you need to extend or modify FlashcardService, do it in the service file itself
-
-//const flashcardService = new FlashcardService();
-//const graphicOrganizerService = new GraphicOrganizerService();
 
 export default function EditorToolbar({ editor, currentColor, setCurrentColor }: ToolbarProps) {
   const { isSaving, isSuccess, selectedId, notes } = useNotes();
@@ -32,7 +27,6 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
   const [showFlashcards, setShowFlashcards] = useState(false);
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]); // Usamos el tipo correcto
   
-  // Usamos useMemo para que las instancias de los servicios no se creen en cada render
   const flashcardService = useMemo(() => new FlashcardService(), []);
   const organizerService = useMemo(() => new GraphicOrganizerService(), []);
 
@@ -51,29 +45,26 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
       }
     }
     fetchFlashcards();
-  }, [selectedId, flashcardService]); // Añadimos flashcardService a las dependencias
+  }, [selectedId, flashcardService]);
 
   const hasFlashcards = flashcards.length > 0;
 
-  useEffect(() =>{
-    if(isSaving) {
-      setShowSaving(true);
-      const timer = setTimeout(() => { // Guardamos el timer para limpiarlo
-        setShowSaving(false);
-      }, 2000);
-      return () => clearTimeout(timer); // Buena práctica: limpiar el timer
-    }
-  }, [isSaving]);
+  useEffect(() => {
+  if (isSaving) {
+    setShowSaving(true);
+  } else if (showSaving) {
+    const timer = setTimeout(() => {
+      setShowSaving(false);
+    }, 2000); 
+    return () => clearTimeout(timer);
+  }
+}, [isSaving, showSaving]);
 
-  // ==================================================================
-  // PASO 2: LA LÓGICA CONDICIONAL VIENE DESPUÉS DE LOS HOOKS
-  // ==================================================================
+
   if (!editor) {
-    // Podemos devolver un esqueleto o nada, pero los hooks ya se han ejecutado.
     return null; 
   }
   
-  // El resto de la lógica y manejadores de eventos pueden ir aquí
   const handleOpenOrganizer = async () => {
     setIsModalOpen(true);
     setError(null);
@@ -85,7 +76,7 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
       try {
         const newOrganizer = await organizerService.makeGraphicOrganizer(selectedId || '');
         setMermaidCode(newOrganizer.mermaidCode);
-      } catch (creationError: unknown) { // Usamos 'unknown' en lugar de 'any'
+      } catch (creationError: unknown) {
         if (creationError instanceof Error) {
             setError(creationError.message);
         } else {
@@ -200,7 +191,7 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         isOpen={flashcardsModalOpen}
         onClose={() => setFlashcardsModalOpen(false)}
         noteId={selectedId || ''}
-        notes={notes} // Pasamos las notas para la vista previa
+        notes={notes}
       />
 
       <FlashcardModal
@@ -219,7 +210,6 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         <Network className="w-5 h-5 text-gray-700" />
       </button>
 
-      {/* Renderizamos el Modal y le pasamos todo el estado que necesita */}
       <OrganizerModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
@@ -228,10 +218,8 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         error={error}
       />
 
-      {/* Separador visual */}
       <div className="h-6 w-px bg-gray-300 mx-2"></div>
       
-      {/* Indicador de guardado */}
       {showSaving ? (
         <span className="text-blue-500 animate-pulse font-medium text-sm px-2">
           Saving…
