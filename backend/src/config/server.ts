@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import userRoutes from '../routes/userRoutes';
 import notesRoutes from '../routes/notesRoutes';
 import flashcardRoutes from '../routes/flashcardRoutes';
+import graphicRoutes from '../routes/graphicsRoutes';
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
@@ -35,6 +36,7 @@ app.use(cors({
 
 app.use('/api/users', userRoutes);
 app.use('/api/flashcards', flashcardRoutes);
+app.use('/api/graphic-organizers', graphicRoutes);
 app.use('/api/notes', notesRoutes);
 app.use('/', (req, res) => {res.send('Hello from studia api');});
 

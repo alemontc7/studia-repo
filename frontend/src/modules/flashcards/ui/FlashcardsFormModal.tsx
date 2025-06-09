@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { FlashcardService } from '../application/flashcardService';
 import { FlashcardModal } from './FlashcardsResultModal';
 import { set } from 'lodash';
@@ -9,19 +9,37 @@ interface FlashcardsFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   noteId?: string;
+  notes?: any[]; // Optional, if you want to pass notes for preview
 }
 
 export const FlashcardsFormModal: React.FC<FlashcardsFormModalProps> = (
   { 
     isOpen, 
     onClose, 
-    noteId = ''
+    noteId = '',
+    notes = [] // Optional, if you want to pass notes for preview
   }
   ) => {
   const [selectedModel, setSelectedModel] = useState<string>('gpt-4');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFinished, setIsFinished] = useState<boolean>(false);
   const [flashcards, setFlashcards] = useState<any[]>([]);
+  const [myNote, setMyNote] = useState<any>(notes[0] || []); // State to hold notes for preview
+
+  useEffect(() => {
+    console.log('FlashcardsFormModal mounted with noteId:', noteId);
+    //we must find the note with the given noteId
+    if (notes.length > 0 && noteId) {
+      console.log('Notes available:', notes);
+      const note = notes.find(n => n.id === noteId);
+      console.log('Selected note:', note);
+      if (note) {
+        setMyNote(note); // Set the selected note for preview
+      } else {
+        setMyNote([]); // If no note found, clear the preview
+      }
+    }
+  }, [notes]);
 
   const onGenerate = async () => {
     setIsLoading(true);
@@ -62,9 +80,9 @@ export const FlashcardsFormModal: React.FC<FlashcardsFormModalProps> = (
 
             {/* Note Preview (hardcoded placeholder) */}
             <div className="border border-gray-200 rounded-md p-4 mb-4 max-h-40 overflow-y-auto">
-              <h3 className="font-medium mb-2">Vista previa de la nota:</h3>
+              <h3 className="font-medium mb-2">Se generará contenido para la nota:</h3>
               <p className="text-gray-700 text-sm">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...
+                {myNote.title || 'Título de la nota no disponible'}
               </p>
             </div>
 
@@ -79,9 +97,10 @@ export const FlashcardsFormModal: React.FC<FlashcardsFormModalProps> = (
                 onChange={(e) => setSelectedModel(e.target.value)}
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
               >
-                <option value="gpt-4">GPT-4</option>
-                <option value="gpt-3.5-turbo">GPT-3.5-turbo</option>
-                <option value="hf-flan-t5">HF Flan-T5</option>
+                <option value="openai/gpt-4.1">GPT-4.1</option>
+                <option value="openai/gpt-4o">GPT-4o</option>
+                <option value="xai/grok-3">Grok-3</option>
+                <option value="cohere/cohere-command-a">Cohere command a</option>
               </select>
             </div>
 

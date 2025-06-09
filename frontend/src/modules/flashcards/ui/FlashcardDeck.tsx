@@ -43,7 +43,7 @@ export const FlashcardDeck: React.FC = () => {
           Your flashcards
         </h2>
 
-        <div className="relative w-64 h-50 flex items-center justify-center">
+        <div className="relative w-64 flex items-center justify-center">
           <div className="absolute -top-2 -left-2 w-full h-full bg-white rounded-xl shadow-sm border border-gray-100 transform rotate-3" />
           <div className="absolute -top-1 -left-1 w-full h-full bg-white rounded-xl shadow-md border border-gray-150 transform rotate-1" />
 

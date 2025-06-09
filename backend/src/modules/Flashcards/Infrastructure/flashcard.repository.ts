@@ -24,6 +24,9 @@ export async function generateFlashCards(
     const content = note.content;
     const text = convertTipTapToText(content);
     console.log("The text is", text);
+    //openai/gpt-4o
+    //xai/grok-3
+    //openai/gpt-4.1
     const myModel = "openai/gpt-4o";
     const client = ModelClient(
         GITHUB_AI_ENDPOINT, 

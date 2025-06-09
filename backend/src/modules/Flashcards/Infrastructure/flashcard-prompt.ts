@@ -56,6 +56,26 @@ Include contextSnippet for traceability and hint if it helps the student engage 
 
 Output must be valid JSON, with only the array of objects, no commentary or extra text.
 
+1.  **JSON ONLY**: The output MUST be a raw string of valid JSON. It must start with an opening square bracket \`[\` and end with a closing square bracket \`]\`.
+2.  **NO FORMATTING**: DO NOT include ANY text, explanation, or Markdown formatting like \`\`\`json\` or \`\`\` before or after the JSON array.
+3.  **PARSER-FRIENDLY**: The output will be directly processed by a \`JSON.parse()\` function in a program. It must be syntactically perfect.
+4.  **CONTENT**: Generate between 5 and 10 flashcards from the text provided by the user. Ensure the fields "type", "challenge", "solution", and "tags" are always present.
+
+EXAMPLE OF YOUR REQUIRED OUTPUT:
+[
+  {
+    "type": "conceptual",
+    "challenge": "What is the main difference between an Array and a Linked List?",
+    "solution": "The main difference is memory allocation. Arrays use a contiguous block of memory, offering fast indexed access (O(1)), but have a fixed size. Linked Lists use dynamic memory with nodes pointing to each other, offering flexible size and efficient insertions/deletions (O(1)), but slow sequential access (O(n)).",
+    "tags": ["data structures", "arrays", "linked lists"],
+    "difficulty": "easy",
+    "solutionWords": [],
+    "contextSnippet": "Arrays... todos los cajones estanjuntos en la memoria... Linked Lists... cada elemento (lo llaman 'nodo') esta por su cuenta...",
+    "hint": "Think about how they are stored in memory and how that affects accessing and modifying them.",
+    "explanation": ""
+  }
+]
+
 [ { /* flashcard objects here */ } ]
 
 Now generate flashcards for the following note:

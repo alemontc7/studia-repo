@@ -2,13 +2,15 @@
 
 import React, { use, useEffect, useState } from 'react';
 import { type Editor } from '@tiptap/react';
-import { Bold, Italic, List, Code, Layers, Plus} from 'lucide-react';
+import { Bold, Italic, List, Code, Layers, Plus, Network} from 'lucide-react';
 import '../styles/EditorToolbar.css';
 import { useNotes } from '@/modules/notes/ui/NotesContent';
 import { FlashcardsFormModal } from '@/modules/flashcards/ui/FlashcardsFormModal';
 import { set } from 'lodash';
 import { FlashcardService } from '../../flashcards/application/flashcardService';
 import { FlashcardModal } from '@/modules/flashcards/ui/FlashcardsResultModal';
+import { GraphicOrganizerService } from '@/modules/graphicOrganizers/application/graphicOrganizerService';
+import { OrganizerModal } from '@/modules/graphicOrganizers/ui/OrganizerModal';
 
 interface ToolbarProps {
   editor: Editor | null;
@@ -20,11 +22,12 @@ interface ToolbarProps {
 // If you need to extend or modify FlashcardService, do it in the service file itself
 
 const flashcardService = new FlashcardService();
+const graphicOrganizerService = new GraphicOrganizerService();
 
 export default function EditorToolbar({ editor, currentColor, setCurrentColor }: ToolbarProps) {
   if (!editor) return null;
 
-  const { isSaving, isSuccess, selectedId } = useNotes();
+  const { isSaving, isSuccess, selectedId, notes } = useNotes();
   const [showSaving, setShowSaving] = useState(false);
   const [flashcardsModalOpen, setFlashcardsModalOpen] = useState(false);
   const [showFlashcards, setShowFlashcards] = useState(false);
@@ -60,6 +63,48 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
     rounded-md
     transition-colors duration-150
   `;
+
+  const [organizerService] = useState(() => new GraphicOrganizerService());
+
+  // --- Estados que controlarán el flujo ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mermaidCode, setMermaidCode] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleOpenOrganizer = async () => {
+    // 1. Abrimos el modal inmediatamente y limpiamos estados anteriores.
+    setIsModalOpen(true);
+    setError(null);
+    setIsLoading(true); // Siempre empezamos en estado de carga mientras verificamos.
+
+    try {
+      // 2. Intentamos OBTENER un organizador existente primero.
+      const existingOrganizer = await organizerService.obtainGraphicOrganizer(selectedId || '');
+      // parse that existingOrganizer to json
+      setMermaidCode(existingOrganizer.mermaidCode);
+    } catch (e) {
+      // 3. Si `obtain` falla (probablemente un 404), significa que no existe.
+      //    Así que procedemos a CREARLO.
+      console.log("Organizer not found, creating a new one...");
+      try {
+        const newOrganizer = await organizerService.makeGraphicOrganizer(selectedId || '');
+        setMermaidCode(newOrganizer.mermaidCode);
+      } catch (creationError: any) {
+        // Si la creación también falla, mostramos un error.
+        setError(creationError.message || "No se pudo generar el organizador.");
+      }
+    } finally {
+      // 4. Pase lo que pase, al final dejamos de cargar.
+      setIsLoading(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    // Opcional: limpiar el código al cerrar para que siempre se recargue
+    setMermaidCode(null); 
+  };
 
   return (
     <div className='sticky top-0 z-20 pb-8 pt-8'>
@@ -131,6 +176,7 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
       <button
         onClick={() => 
           {
+            console.log("CLICK ON GENERATE FLASHCARDS");
             if(!hasFlashcards) {
               setFlashcardsModalOpen(true);
             } else{
@@ -146,12 +192,12 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
         aria-label="Generar flashcards"
       >
         <Layers className="w-5 h-5 text-gray-700" />
-        <Plus className="w-3 h-3 text-green-500 absolute -top-1 -right-1"/>
       </button>
       <FlashcardsFormModal
         isOpen={flashcardsModalOpen}
         onClose={() => setFlashcardsModalOpen(false)}
         noteId={selectedId || ''}
+        notes={notes} // Pasamos las notas para la vista previa
       />
 
       <FlashcardModal
@@ -160,6 +206,23 @@ export default function EditorToolbar({ editor, currentColor, setCurrentColor }:
           setShowFlashcards(false);
         }}
         cards={flashcards}
+      />
+
+      <button
+        onClick={handleOpenOrganizer}
+        className="p-2 rounded-lg relative flex items-center hover:bg-gray-100"
+        aria-label="Generar organizador gráfico"
+      >
+        <Network className="w-5 h-5 text-gray-700" />
+      </button>
+
+      {/* Renderizamos el Modal y le pasamos todo el estado que necesita */}
+      <OrganizerModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        isLoading={isLoading}
+        mermaidCode={mermaidCode}
+        error={error}
       />
 
       {/* Separador visual */}
